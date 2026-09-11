@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -12,13 +13,16 @@
     <%= csp_meta_tag %>
     <%= render "paper_view/shared/styles" %>
   </head>
+
   <body>
     <header class="pv-header">
       <%= link_to root_path, class: "pv-header__brand" do %>
         <span class="pv-header__dot"></span>
         PaperView
       <% end %>
+
       <span class="pv-muted pv-mono">PaperTrail versions</span>
+
       <% if main_app.respond_to?(:root_path) %>
         <span class="pv-header__meta"><%= link_to "← Back to app", main_app.root_path %></span>
       <% end %>

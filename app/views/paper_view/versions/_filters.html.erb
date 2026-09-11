@@ -3,8 +3,19 @@
 
   <div class="pv-field pv-field--grow">
     <label for="pv-item-type">Item type</label>
-    <input id="pv-item-type" type="text" name="item_type" value="<%= query.item_type %>" class="pv-input"
-           list="pv-item-types" placeholder="Type to search…" autocomplete="off" <%= "autofocus" if autofocus %>>
+
+    <input
+      id="pv-item-type"
+      type="text"
+      name="item_type"
+      value="<%= query.item_type %>"
+      class="pv-input"
+      list="pv-item-types"
+      placeholder="Type to search…"
+      autocomplete="off"
+      <%= "autofocus" if autofocus %>
+    >
+
     <datalist id="pv-item-types">
       <%= safe_join(item_types.map { |item_type| tag.option(nil, value: item_type) }) %>
     </datalist>
@@ -12,12 +23,22 @@
 
   <div class="pv-field">
     <label for="pv-item-id">Item ID</label>
-    <input id="pv-item-id" type="text" name="item_id" value="<%= query.item_id %>"
-           class="pv-input" placeholder="any" autocomplete="off" inputmode="numeric">
+
+    <input
+      id="pv-item-id"
+      type="text"
+      name="item_id"
+      value="<%= query.item_id %>"
+      class="pv-input"
+      placeholder="any"
+      autocomplete="off"
+      inputmode="numeric"
+    >
   </div>
 
   <div class="pv-field">
     <label for="pv-event">Event</label>
+
     <select id="pv-event" name="event" class="pv-input">
       <option value="">Any event</option>
       <%= options_for_select(PaperView::VersionQuery::EVENTS, query.event) %>
@@ -26,6 +47,7 @@
 
   <div class="pv-field pv-field--actions">
     <button type="submit" class="pv-btn pv-btn--primary">Search</button>
+
     <% if query.submitted? %>
       <%= link_to "Reset", versions_path, class: "pv-btn" %>
     <% end %>

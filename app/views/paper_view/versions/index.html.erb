@@ -2,6 +2,7 @@
   <section class="pv-panel pv-panel--hero">
     <div class="pv-hero">
       <h1 class="pv-hero__title">Which trail to follow?</h1>
+
       <div class="pv-hero__search">
         <%= render "paper_view/versions/filters", query: @query, item_types: @item_types, autofocus: true %>
       </div>
@@ -27,14 +28,24 @@
       <section class="pv-card">
         <div class="pv-card__head">
           <span class="pv-card__title"><%= @timeline.title %></span>
+
           <span class="pv-card__meta">
             <%= number_with_delimiter(@paginator.total_count) %>
             <%= "version".pluralize(@paginator.total_count) %><%= " · #{@timeline.items.size} items" if @timeline.stream? %>
           </span>
+
           <span class="pv-spacer"></span>
+
           <%= form_with url: versions_path, method: :get, local: true, data: {turbo: false}, class: "pv-head-form" do %>
             <%= paper_view_hidden_filters(except: :sort) %>
-            <select id="pv-sort" name="sort" class="pv-select-mini" data-pv-autosubmit aria-label="Sort order">
+
+            <select
+              id="pv-sort"
+              name="sort"
+              class="pv-select-mini"
+              data-pv-autosubmit
+              aria-label="Sort order"
+            >
               <option value="desc" <%= "selected" if @query.sort == "desc" %>>Newest first</option>
               <option value="asc" <%= "selected" if @query.sort == "asc" %>>Oldest first</option>
             </select>
@@ -45,6 +56,7 @@
           <% @timeline.groups.each do |group| %>
             <div class="pv-timeline__group">
               <div class="pv-timeline__day"><%= group.label %></div>
+
               <% group.rows.each do |row| %>
                 <%= render "paper_view/versions/timeline_row", row: row, stream: @timeline.stream?, selected: row == @timeline.selected %>
               <% end %>

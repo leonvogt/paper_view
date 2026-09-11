@@ -28,7 +28,13 @@
   <%= form_with url: versions_path, method: :get, local: true, data: {turbo: false}, class: "pv-footer__end" do %>
     <%= paper_view_hidden_filters(except: :per_page) %>
     <label class="pv-muted" for="pv-per-page">Per page</label>
-    <select id="pv-per-page" name="per_page" class="pv-select-mini" data-pv-autosubmit>
+
+    <select
+      id="pv-per-page"
+      name="per_page"
+      class="pv-select-mini"
+      data-pv-autosubmit
+    >
       <%= options_for_select(paginator.per_page_options, paginator.per_page) %>
     </select>
   <% end %>
