@@ -19,15 +19,9 @@ gem "paper_view"
 ```ruby
 # config/routes.rb
 Rails.application.routes.draw do
-  mount PaperView::Engine => "/paper_view"
-end
-```
-
-Mounting it inside an authenticated route is the simplest way to protect it:
-
-```ruby
-authenticate :user, ->(user) { user.admin? } do
-  mount PaperView::Engine => "/paper_view"
+  authenticate :user, ->(user) { user.admin? } do
+    mount PaperView::Engine => "/paper_view"
+  end
 end
 ```
 
