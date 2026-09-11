@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.summary = "Lightweight dashboard to browse, diff and revert PaperTrail versions"
   spec.description = "PaperView is a mountable Rails engine that turns the paper_trail versions table into a searchable dashboard"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.1"
+  spec.required_ruby_version = ">= 2.7"
 
   spec.metadata["source_code_uri"] = spec.homepage
   spec.metadata["changelog_uri"] = "#{spec.homepage}/releases"
