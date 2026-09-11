@@ -8,4 +8,5 @@ group :development, :test do
   gem "puma"
   gem "debug"
   gem "standard"
+  gem "rspec"
 end
