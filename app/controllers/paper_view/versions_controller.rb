@@ -6,7 +6,7 @@ module PaperView
     def index
       @query = VersionQuery.new(params)
       @item_types = VersionQuery.item_types
-      return unless @query.scoped?
+      return unless @query.submitted?
 
       @paginator = Paginator.new(@query.relation, page: params[:page], per_page: PaperView.config.per_page)
       @versions = @paginator.records

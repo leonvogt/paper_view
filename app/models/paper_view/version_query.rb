@@ -1,6 +1,7 @@
 module PaperView
   class VersionQuery
     EVENTS = %w[create update destroy].freeze
+    FILTER_KEYS = %i[item_type item_id event].freeze
 
     attr_reader :item_type, :item_id, :event
 
@@ -9,24 +10,26 @@ module PaperView
     end
 
     def initialize(params = {})
+      @submitted = FILTER_KEYS.any? { |key| params.key?(key) }
       @item_type = params[:item_type].presence
       @item_id = params[:item_id].presence
       @event = params[:event].presence_in(EVENTS)
     end
 
-    def scoped?
-      item_type.present?
+    def submitted?
+      @submitted
     end
 
     def relation
-      scope = PaperView.version_class.where(item_type: item_type)
+      scope = PaperView.version_class.all
+      scope = scope.where(item_type: item_type) if item_type
       scope = scope.where(item_id: item_id) if item_id
       scope = scope.where(event: event) if event
       scope.order(created_at: :desc, id: :desc)
     end
 
     def label
-      return nil unless scoped?
+      return "All versions" unless item_type
       item_id ? "#{item_type} ##{item_id}" : item_type
     end
   end

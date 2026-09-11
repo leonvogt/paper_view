@@ -1,6 +1,6 @@
-<% content_for :title, @query.scoped? ? @query.label : "Versions" %>
+<% content_for :title, @query.submitted? ? @query.label : "Versions" %>
 
-<% unless @query.scoped? %>
+<% unless @query.submitted? %>
   <section class="pv-panel pv-panel--hero">
     <div class="pv-hero">
       <h1 class="pv-hero__title">Which trail to follow?</h1>
@@ -32,7 +32,7 @@
     </div>
 
     <% if @versions.empty? %>
-      <p class="pv-empty">No versions recorded for <%= @query.label %>.</p>
+      <p class="pv-empty">No versions match this filter.</p>
     <% else %>
       <div class="pv-table-wrap">
         <table class="pv-table">
