@@ -50,19 +50,28 @@ module PaperView
       event == "destroy"
     end
 
+    def snapshot?
+      created? || destroyed?
+    end
+
     def change_label
-      noun = created? ? "initial value" : "changed field"
+      noun = case event
+      when "create" then "initial value"
+      when "destroy" then "final value"
+      else "changed field"
+      end
+
       "#{change_set.size} #{noun.pluralize(change_set.size)}"
     end
 
     def lines
-      created? ? [] : leaves.first(MAX_LINES)
+      snapshot? ? [] : leaves.first(MAX_LINES)
     end
 
     def footnotes
       notes = []
       notes << "payload not deserializable" if change_set.unreadable?
-      return notes if created?
+      return notes if snapshot?
 
       notes << "..." if overflow_count.positive?
       notes << "no attribute changes recorded" if leaves.empty? && !change_set.unreadable?
@@ -92,14 +101,12 @@ module PaperView
         version = #{PaperView.config.version_class_name}.find(#{id})
         item    = version.reify          # the deleted record
 
-        item.attributes                  # columns added since are nil here
-
-        # item.save!                     # re-create the record
+        # item.save!                     # re-create the record; columns added since are nil
       RUBY
     end
 
     def leaves
-      @leaves ||= destroyed? ? [LeafChange.new("record", item_label, nil)] : change_set.flat_map(&:leaves)
+      @leaves ||= change_set.flat_map(&:leaves)
     end
 
     def overflow_count

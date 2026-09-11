@@ -48,6 +48,10 @@
             <div class="pv-bars">
               <div class="pv-bar pv-bar--new"><%= change.new_text %></div>
             </div>
+          <% elsif row.destroyed? %>
+            <div class="pv-bars">
+              <div class="pv-bar pv-bar--old"><%= change.old_text %></div>
+            </div>
           <% elsif change.nested? %>
             <% change.leaf_changes.each do |leaf| %>
               <div class="pv-keys">

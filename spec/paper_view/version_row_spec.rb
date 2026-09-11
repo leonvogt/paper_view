@@ -12,9 +12,12 @@ RSpec.describe PaperView::VersionRow do
     expect(row(changes).footnotes).to eq(["..."])
   end
 
-  it "shows the record itself for a destroy" do
-    expect(row(nil, event: "destroy").lines.map(&:path)).to eq(["record"])
-    expect(row(nil, event: "destroy").footnotes).to be_empty
+  it "shows no diff for a destroy" do
+    destroyed = row(YAML.dump({"name" => ["Widget", nil]}), event: "destroy")
+
+    expect(destroyed.lines).to be_empty
+    expect(destroyed.footnotes).to be_empty
+    expect(destroyed.change_label).to eq("1 final value")
   end
 
   it "calls out an empty payload" do
