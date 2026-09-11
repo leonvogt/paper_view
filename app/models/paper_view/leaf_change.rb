@@ -8,6 +8,16 @@ module PaperView
       @new_value = new_value
     end
 
+    def under(prefix)
+      self.class.new(prefixed(prefix), old_value, new_value)
+    end
+
+    def prefixed(prefix)
+      return prefix if path.empty?
+
+      path.start_with?("[") ? "#{prefix}#{path}" : "#{prefix}.#{path}"
+    end
+
     def old_text
       AttributeChange.display(old_value)
     end

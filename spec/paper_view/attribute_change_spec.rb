@@ -69,12 +69,43 @@ RSpec.describe PaperView::AttributeChange do
         .to eq([["settings.active", "0", "1"]])
     end
 
-    it "keeps an array whole" do
+    it "reports what an array column lost" do
       attribute = change("roles", %w[admin editor], %w[editor])
 
-      expect(attribute).not_to be_nested
+      expect(attribute).to be_nested
       expect(attribute.leaves.map { |leaf| [leaf.path, leaf.old_text, leaf.new_text] })
-        .to eq([["roles", '["admin","editor"]', '["editor"]']])
+        .to eq([["roles[0]", "admin", PaperView::EMPTY]])
+      expect(attribute.unchanged_count).to eq(1)
+    end
+
+    it "reports what an array column gained" do
+      old_cache = %w[measurement_interval control_io_board_output manual_muting battery sensor_calibration_mode]
+      attribute = change("available_feature_references_cache", old_cache, old_cache.dup.insert(4, "serial_number"))
+
+      expect(attribute.leaves.map { |leaf| [leaf.path, leaf.old_text, leaf.new_text] })
+        .to eq([["available_feature_references_cache[4]", PaperView::EMPTY, "serial_number"]])
+      expect(attribute.unchanged_count).to eq(5)
+    end
+
+    it "indexes an array element that changed in place" do
+      attribute = change("settings", {"tags" => %w[a b c]}, {"tags" => %w[a x c]})
+
+      expect(attribute.leaf_changes.map { |leaf| [leaf.path, leaf.old_text, leaf.new_text] })
+        .to eq([["tags[1]", "b", "x"]])
+      expect(attribute.unchanged_count).to eq(2)
+    end
+
+    it "compares a nested array as a set once its length changes" do
+      attribute = change("settings", {"tags" => %w[a b]}, {"tags" => %w[a b c]})
+
+      expect(attribute.leaf_changes.map { |leaf| [leaf.path, leaf.old_text, leaf.new_text] })
+        .to eq([["tags[2]", PaperView::EMPTY, "c"]])
+    end
+
+    it "walks into a hash inside an array" do
+      attribute = change("settings", {"rows" => [{"qty" => 1}]}, {"rows" => [{"qty" => 2}]})
+
+      expect(attribute.leaf_changes.map(&:path)).to eq(["rows[0].qty"])
     end
 
     it "expands a structure that was just set" do

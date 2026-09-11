@@ -38,13 +38,27 @@ module PaperView
       nil
     end
 
-    def self.flatten(value, prefix = nil, target = {})
-      if value.is_a?(Hash) && value.any?
-        value.each { |key, nested| flatten(nested, [prefix, key].compact.join("."), target) }
-      elsif prefix
-        target[prefix] = value
+    # Walks both sides at once, collecting every leaf as a [path, old, new] triple.
+    # Arrays line up by index while their length holds. Once it changes they compare by
+    # membership instead, each gone or gained element labelled with its own position.
+    def self.flatten_pair(old_value, new_value, path = nil, target = [])
+      if both(Hash, old_value, new_value)
+        (old_value.keys | new_value.keys).each do |key|
+          flatten_pair(old_value[key], new_value[key], [path, key].compact.join("."), target)
+        end
+      elsif both(Array, old_value, new_value) && old_value.size == new_value.size
+        old_value.each_index { |index| flatten_pair(old_value[index], new_value[index], "#{path}[#{index}]", target) }
+      elsif both(Array, old_value, new_value)
+        old_value.each_with_index { |item, index| target << ["#{path}[#{index}]", item, new_value.include?(item) ? item : nil] }
+        new_value.each_with_index { |item, index| target << ["#{path}[#{index}]", nil, item] unless old_value.include?(item) }
+      else
+        target << [path, old_value, new_value]
       end
       target
+    end
+
+    def self.both(kind, old_value, new_value)
+      old_value.is_a?(kind) && new_value.is_a?(kind) && (old_value.any? || new_value.any?)
     end
 
     def initialize(name, old_value, new_value)
@@ -54,7 +68,7 @@ module PaperView
     end
 
     def nested?
-      !hashes.nil?
+      !structures.nil?
     end
 
     def old_text
@@ -66,19 +80,17 @@ module PaperView
     end
 
     def leaf_changes
-      return [] unless nested?
-
-      changed_keys.map { |key| LeafChange.new(key, old_keys[key], new_keys[key]) }
+      leaf_pairs.filter_map { |path, before, after| LeafChange.new(path, before, after) if before != after }
     end
 
     def unchanged_count
-      nested? ? all_keys.size - changed_keys.size : 0
+      leaf_pairs.count { |_, before, after| before == after }
     end
 
     def leaves
       return [LeafChange.new(name, old_value, new_value)] unless nested?
 
-      leaf_changes.map { |change| LeafChange.new("#{name}.#{change.path}", change.old_value, change.new_value) }
+      leaf_changes.map { |change| change.under(name) }
     end
 
     private
@@ -87,39 +99,29 @@ module PaperView
       self.class.display(self.class.structure(value) || value, pretty: true)
     end
 
-    def hashes
-      return @hashes if defined?(@hashes)
+    def structures
+      return @structures if defined?(@structures)
 
-      @hashes = hash_pair
+      @structures = structure_pair
     end
 
-    def hash_pair
-      pair = [old_value, new_value].map { |value| hash_for(value) }
-      pair if pair.all? && pair.any?(&:any?)
+    # Both sides have to be the same kind of structure. A blank side counts as an empty one,
+    # so a structure that was just set or cleared still diffs.
+    def structure_pair
+      pair = [old_value, new_value].map { |value| self.class.structure(value) }
+      kind = pair.compact.first&.class
+      return unless kind && pair.any? { |structure| structure&.any? }
+
+      pair = pair.zip([old_value, new_value]).map { |structure, value| structure || (kind.new if blank?(value)) }
+      pair if pair.all? { |structure| structure.is_a?(kind) }
     end
 
-    # A blank side counts as an empty hash, so a structure that was just set still diffs.
-    def hash_for(value)
-      return {} if value.nil? || value == ""
-
-      structure = self.class.structure(value)
-      structure if structure.is_a?(Hash)
+    def blank?(value)
+      value.nil? || value == ""
     end
 
-    def old_keys
-      @old_keys ||= self.class.flatten(hashes.first)
-    end
-
-    def new_keys
-      @new_keys ||= self.class.flatten(hashes.last)
-    end
-
-    def all_keys
-      @all_keys ||= old_keys.keys | new_keys.keys
-    end
-
-    def changed_keys
-      @changed_keys ||= all_keys.reject { |key| old_keys.key?(key) && new_keys.key?(key) && old_keys[key] == new_keys[key] }
+    def leaf_pairs
+      @leaf_pairs ||= nested? ? self.class.flatten_pair(*structures) : []
     end
   end
 end
