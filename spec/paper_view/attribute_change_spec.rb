@@ -48,15 +48,54 @@ RSpec.describe PaperView::AttributeChange do
     end
   end
 
-  describe "#key_changes" do
+  describe "#leaf_changes" do
     subject(:attribute) { change("settings", {"a" => 1, "b" => {"c" => 2}}, {"a" => 1, "b" => {"c" => 3}}) }
 
     it "only covers changed keys" do
-      expect(attribute.key_changes.map(&:path)).to eq(["b.c"])
+      expect(attribute.leaf_changes.map(&:path)).to eq(["b.c"])
     end
 
-    it "counts the untouched keys" do
-      expect(attribute.unchanged_key_count).to eq(1)
+    it "counts the untouched values" do
+      expect(attribute.unchanged_count).to eq(1)
+    end
+  end
+
+  describe "#nested?" do
+    it "diffs json kept as a string" do
+      attribute = change("settings", '{"active":"0","reminders":"2"}', '{"active":"1","reminders":"2"}')
+
+      expect(attribute).to be_nested
+      expect(attribute.leaves.map { |leaf| [leaf.path, leaf.old_text, leaf.new_text] })
+        .to eq([["settings.active", "0", "1"]])
+    end
+
+    it "keeps an array whole" do
+      attribute = change("roles", %w[admin editor], %w[editor])
+
+      expect(attribute).not_to be_nested
+      expect(attribute.leaves.map { |leaf| [leaf.path, leaf.old_text, leaf.new_text] })
+        .to eq([["roles", '["admin","editor"]', '["editor"]']])
+    end
+
+    it "expands a structure that was just set" do
+      expect(change("settings", nil, {"a" => 1}).leaf_changes.map(&:path)).to eq(["a"])
+    end
+
+    it "leaves a plain string alone" do
+      expect(change("note", "{not json", "still not json")).not_to be_nested
+    end
+
+    it "keeps both sides whole when only one of them is a structure" do
+      attribute = change("settings", '{"a":1}', "wiped")
+
+      expect(attribute).not_to be_nested
+      expect(attribute.leaves.map(&:path)).to eq(["settings"])
+    end
+  end
+
+  describe "#old_text" do
+    it "pretty prints json kept as a string" do
+      expect(change("settings", '{"a":1}', "wiped").old_text).to eq("{\n  \"a\": 1\n}")
     end
   end
 end

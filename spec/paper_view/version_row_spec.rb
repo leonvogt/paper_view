@@ -30,4 +30,12 @@ RSpec.describe PaperView::VersionRow do
 
     expect(row(changes).lines.map(&:path)).to eq(["settings.a"])
   end
+
+  it "diffs a structure stored as json text" do
+    changes = YAML.dump({"settings" => ['{"escalation_is_active":"0","send_reminder_after":"0"}',
+      '{"escalation_is_active":"1","send_reminder_after":"0"}']})
+    line = row(changes).lines.first
+
+    expect([line.path, line.old_text, line.new_text]).to eq(["settings.escalation_is_active", "0", "1"])
+  end
 end

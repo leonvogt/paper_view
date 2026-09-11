@@ -2,6 +2,8 @@ require "json"
 
 module PaperView
   class AttributeChange
+    JSON_START = /\A\s*[\[{]/
+
     attr_reader :name, :old_value, :new_value
 
     def self.display(value, pretty: false)
@@ -20,6 +22,22 @@ module PaperView
       value.inspect
     end
 
+    def self.structure(value)
+      case value
+      when Hash, Array then value
+      when String then parse(value)
+      end
+    end
+
+    def self.parse(text)
+      return unless text.match?(JSON_START)
+
+      structure = JSON.parse(text)
+      structure if structure.is_a?(Hash) || structure.is_a?(Array)
+    rescue JSON::ParserError
+      nil
+    end
+
     def self.flatten(value, prefix = nil, target = {})
       if value.is_a?(Hash) && value.any?
         value.each { |key, nested| flatten(nested, [prefix, key].compact.join("."), target) }
@@ -36,39 +54,64 @@ module PaperView
     end
 
     def nested?
-      old_value.is_a?(Hash) || new_value.is_a?(Hash)
+      !hashes.nil?
     end
 
     def old_text
-      @old_text ||= self.class.display(old_value, pretty: true)
+      @old_text ||= text(old_value)
     end
 
     def new_text
-      @new_text ||= self.class.display(new_value, pretty: true)
+      @new_text ||= text(new_value)
     end
 
-    def key_changes
+    def leaf_changes
+      return [] unless nested?
+
       changed_keys.map { |key| LeafChange.new(key, old_keys[key], new_keys[key]) }
     end
 
-    def unchanged_key_count
-      all_keys.size - changed_keys.size
+    def unchanged_count
+      nested? ? all_keys.size - changed_keys.size : 0
     end
 
     def leaves
       return [LeafChange.new(name, old_value, new_value)] unless nested?
 
-      key_changes.map { |change| LeafChange.new("#{name}.#{change.path}", change.old_value, change.new_value) }
+      leaf_changes.map { |change| LeafChange.new("#{name}.#{change.path}", change.old_value, change.new_value) }
     end
 
     private
 
+    def text(value)
+      self.class.display(self.class.structure(value) || value, pretty: true)
+    end
+
+    def hashes
+      return @hashes if defined?(@hashes)
+
+      @hashes = hash_pair
+    end
+
+    def hash_pair
+      pair = [old_value, new_value].map { |value| hash_for(value) }
+      pair if pair.all? && pair.any?(&:any?)
+    end
+
+    # A blank side counts as an empty hash, so a structure that was just set still diffs.
+    def hash_for(value)
+      return {} if value.nil? || value == ""
+
+      structure = self.class.structure(value)
+      structure if structure.is_a?(Hash)
+    end
+
     def old_keys
-      @old_keys ||= self.class.flatten(old_value)
+      @old_keys ||= self.class.flatten(hashes.first)
     end
 
     def new_keys
-      @new_keys ||= self.class.flatten(new_value)
+      @new_keys ||= self.class.flatten(hashes.last)
     end
 
     def all_keys
