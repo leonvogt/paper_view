@@ -59,19 +59,33 @@ module PaperView
     end
 
     def console_snippet
-      <<~RUBY
-        version = #{PaperView.config.version_class_name}.find(#{id})
-        item    = version.reify          # state before this version
-        current = version.item           # current record
-
-        version.changeset                # { attr => [old, new] }
-        item.attributes.slice(*version.changeset.keys)
-
-        # item.save!                     # roll back to this state
-      RUBY
+      destroyed? ? restore_snippet : rollback_snippet
     end
 
     private
+
+    def rollback_snippet
+      <<~RUBY
+        version = #{PaperView.config.version_class_name}.find(#{id})
+        current = version.item           # current record
+
+        version.changeset                # { attr => [old, new] }
+        previous = version.changeset.transform_values(&:first)
+
+        # current.update!(previous)      # roll back only these attributes
+      RUBY
+    end
+
+    def restore_snippet
+      <<~RUBY
+        version = #{PaperView.config.version_class_name}.find(#{id})
+        item    = version.reify          # the deleted record
+
+        item.attributes                  # columns added since are nil here
+
+        # item.save!                     # re-create the record
+      RUBY
+    end
 
     def leaves
       @leaves ||= destroyed? ? [LeafChange.new("record", item_label, nil)] : change_set.flat_map(&:leaves)
