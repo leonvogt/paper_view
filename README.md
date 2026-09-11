@@ -1,7 +1,7 @@
 # PaperView
 
 A lightweight, mountable dashboard for [paper_trail](https://github.com/paper-trail-gem/paper_trail).
-Browse the `versions` table, read a proper diff of `object_changes`, and roll a record back.   
+Browse the `versions` table, read a proper diff of `object_changes`, and roll a record back.
 
 Runtime dependencies: `railties`, `activerecord`, `paper_trail`. Nothing else.
 
@@ -50,6 +50,9 @@ PaperView.setup do |config|
 
   # Turn `whodunnit` into something readable.
   config.whodunnit_label = ->(whodunnit) { User.find_by(id: whodunnit)&.email || whodunnit }
+
+  # Any strftime format.
+  config.time_format = "%Y-%m-%d %H:%M:%S"
 
   config.per_page = 25
 end

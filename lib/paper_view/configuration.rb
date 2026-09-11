@@ -1,6 +1,8 @@
 module PaperView
   class Configuration
-    attr_accessor :version_class_name, :parent_controller, :per_page, :reify_options, :revert_enabled, :undo_create_enabled, :whodunnit_label
+    DEFAULT_TIME_FORMAT = "%Y-%m-%d %H:%M:%S".freeze
+
+    attr_accessor :version_class_name, :parent_controller, :per_page, :reify_options, :revert_enabled, :undo_create_enabled, :whodunnit_label, :time_format
     attr_writer :filter_attributes
     attr_reader :authentication_block, :authorization_block, :revert_authorization_block
 
@@ -12,6 +14,7 @@ module PaperView
       @revert_enabled = true
       @undo_create_enabled = false
       @whodunnit_label = nil
+      @time_format = DEFAULT_TIME_FORMAT
     end
 
     def filter_attributes

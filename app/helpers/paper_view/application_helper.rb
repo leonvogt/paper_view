@@ -15,13 +15,7 @@ module PaperView
     def paper_view_time(time)
       return EMPTY if time.nil?
 
-      tag.time(time.strftime("%Y-%m-%d %H:%M:%S"), datetime: time.iso8601, title: time.iso8601)
-    end
-
-    def paper_view_relative_time(time)
-      return EMPTY if time.nil?
-
-      "#{time_ago_in_words(time)} ago"
+      tag.time(time.strftime(PaperView.config.time_format), datetime: time.iso8601, title: time.iso8601)
     end
 
     def paper_view_revert_label(version)

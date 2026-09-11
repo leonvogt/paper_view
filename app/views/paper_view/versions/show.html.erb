@@ -41,10 +41,7 @@
       </div>
       <div>
         <div class="pv-meta__label">Created at</div>
-        <div class="pv-meta__value">
-          <%= paper_view_time(@version.created_at) %>
-          <span class="pv-muted">(<%= paper_view_relative_time(@version.created_at) %>)</span>
-        </div>
+        <div class="pv-meta__value"><%= paper_view_time(@version.created_at) %></div>
       </div>
       <% if @version.respond_to?(:transaction_id) %>
         <div>
