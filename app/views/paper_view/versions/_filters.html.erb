@@ -1,10 +1,11 @@
 <%= form_with url: versions_path, method: :get, local: true, data: {turbo: false}, class: "pv-search" do %>
   <div class="pv-field pv-field--grow">
     <label for="pv-item-type">Item type</label>
-    <select id="pv-item-type" name="item_type" class="pv-input" <%= "autofocus" if autofocus %>>
-      <option value="">Choose a type…</option>
-      <%= options_for_select(item_types, query.item_type) %>
-    </select>
+    <input id="pv-item-type" type="text" name="item_type" value="<%= query.item_type %>" class="pv-input"
+           list="pv-item-types" placeholder="Type to search…" autocomplete="off" <%= "autofocus" if autofocus %>>
+    <datalist id="pv-item-types">
+      <%= safe_join(item_types.map { |item_type| tag.option(nil, value: item_type) }) %>
+    </datalist>
   </div>
 
   <div class="pv-field">
