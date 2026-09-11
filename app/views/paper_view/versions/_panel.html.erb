@@ -38,7 +38,7 @@
         </p>
       <% end %>
 
-      <% row.change_set.each do |change| %>
+      <% row.change_set.each_with_index do |change, index| %>
         <div class="pv-attribute">
           <span class="pv-attribute__name"><%= change.name %></span>
 
@@ -55,10 +55,23 @@
               </div>
             <% end %>
             <% if change.unchanged_count.positive? %>
-              <span class="pv-attribute__unchanged">
+              <% whole_id = "pv-whole-#{row.id}-#{index}" %>
+              <button
+                type="button"
+                class="pv-attribute__unchanged"
+                aria-expanded="false"
+                aria-controls="<%= whole_id %>"
+                data-pv-toggle="<%= whole_id %>"
+              >
+                <span class="pv-disclosure__arrow">▸</span>
                 <%= change.unchanged_count %> unchanged
                 <%= "value".pluralize(change.unchanged_count) %>
-              </span>
+              </button>
+
+              <div class="pv-bars" id="<%= whole_id %>" hidden>
+                <div class="pv-bar pv-bar--old"><%= change.old_text %></div>
+                <div class="pv-bar pv-bar--new"><%= change.new_text %></div>
+              </div>
             <% end %>
           <% else %>
             <div class="pv-bars">
