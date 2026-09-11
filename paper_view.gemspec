@@ -19,5 +19,5 @@ Gem::Specification.new do |spec|
     Dir["{app,config,lib}/**/*", "MIT-LICENSE", "README.md"]
   end
 
-  spec.add_dependency "railties", ">= 7.0"
+  spec.add_dependency "railties", ">= 6.0"
 end

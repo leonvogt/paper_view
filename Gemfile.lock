@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     paper_view (0.1.0)
-      railties (>= 7.0)
+      railties (>= 6.0)
 
 GEM
   remote: https://rubygems.org/

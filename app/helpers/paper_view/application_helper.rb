@@ -27,8 +27,11 @@ module PaperView
       safe_join(paper_view_filter_params.except(*excluded).map { |name, value| hidden_field_tag(name, value, id: nil) })
     end
 
-    def paper_view_nonce_attributes
-      {nonce: content_security_policy_nonce}
+    def paper_view_nonce_attribute
+      nonce = content_security_policy_nonce
+      return unless nonce
+
+      raw(%( nonce="#{h(nonce)}"))
     end
   end
 end
