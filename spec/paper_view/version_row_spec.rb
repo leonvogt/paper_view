@@ -9,7 +9,7 @@ RSpec.describe PaperView::VersionRow do
     changes = YAML.dump((1..5).to_h { |i| ["field_#{i}", [i, i + 1]] })
 
     expect(row(changes).lines.map(&:path)).to eq(%w[field_1 field_2 field_3])
-    expect(row(changes).footnotes).to eq(["+2 more fields"])
+    expect(row(changes).footnotes).to eq(["..."])
   end
 
   it "shows the record itself for a destroy" do

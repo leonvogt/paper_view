@@ -53,7 +53,7 @@ module PaperView
     def footnotes
       notes = []
       notes << "payload not deserializable" if change_set.unreadable?
-      notes << "+#{overflow_count} more #{"field".pluralize(overflow_count)}" if overflow_count.positive?
+      notes << "..." if overflow_count.positive?
       notes << "no attribute changes recorded" if leaves.empty? && !change_set.unreadable?
       notes
     end
