@@ -1,5 +1,5 @@
 PaperView::Engine.routes.draw do
-  resources :versions, only: :index
+  root "versions#index"
 
-  root to: "versions#index"
+  resources :versions, only: :index
 end
