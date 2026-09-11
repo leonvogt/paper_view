@@ -20,9 +20,8 @@
   <div class="pv-detail__body">
     <% if row.change_set.unreadable? %>
       <p class="pv-detail__note">
-        PaperTrail could not deserialize this payload. Add the classes it contains to
-        <code>ActiveRecord.yaml_column_permitted_classes</code>
-        (<code>Time</code>, <code>Date</code>, <code>ActiveSupport::TimeWithZone</code>, …).
+        The <code>object_changes</code> payload is neither readable YAML nor JSON, so it cannot be
+        diffed. The stored bytes are below under <strong>Raw object_changes</strong>.
       </p>
     <% else %>
       <span class="pv-label"><%= row.change_set.size %> changed <%= "field".pluralize(row.change_set.size) %></span>
@@ -35,9 +34,7 @@
         <div class="pv-attribute">
           <span class="pv-attribute__name"><%= change.name %></span>
 
-          <% if change.filtered? %>
-            <p class="pv-detail__note">Hidden because the attribute matches <code>config.filter_parameters</code>.</p>
-          <% elsif change.nested? %>
+          <% if change.nested? %>
             <% change.key_changes.each do |key_change| %>
               <div class="pv-keys">
                 <span class="pv-keys__name"><%= key_change.path %></span>
@@ -55,8 +52,8 @@
             <% end %>
           <% else %>
             <div class="pv-bars">
-              <div class="pv-bar pv-bar--old"><%= change.old_text.presence || "—" %></div>
-              <div class="pv-bar pv-bar--new"><%= change.new_text.presence || "—" %></div>
+              <div class="pv-bar pv-bar--old"><%= change.old_text %></div>
+              <div class="pv-bar pv-bar--new"><%= change.new_text %></div>
             </div>
           <% end %>
         </div>
@@ -73,7 +70,7 @@
         <span class="pv-disclosure__arrow">▸</span> Reify
       </button>
 
-      <pre class="pv-raw" id="pv-raw-<%= row.id %>" hidden><%= paper_view_pretty_json(row.change_set.to_filtered_hash) %></pre>
+      <pre class="pv-raw" id="pv-raw-<%= row.id %>" hidden><%= row.change_set.raw_text %></pre>
 
       <div class="pv-snippet" id="pv-reify-<%= row.id %>" hidden>
         <div class="pv-snippet__head">

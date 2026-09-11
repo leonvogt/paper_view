@@ -47,15 +47,14 @@ module PaperView
     end
 
     def lines
-      visible_leaves.first(MAX_LINES)
+      leaves.first(MAX_LINES)
     end
 
     def footnotes
       notes = []
-      notes << "unreadable payload (serialized) hidden" if change_set.unreadable?
-      notes << derived_note if derived_leaves.any?
-      notes << overflow_note if overflow_count.positive?
-      notes << "no attribute changes recorded" if visible_leaves.empty? && !change_set.unreadable?
+      notes << "payload not deserializable" if change_set.unreadable?
+      notes << "+#{overflow_count} more #{"field".pluralize(overflow_count)}" if overflow_count.positive?
+      notes << "no attribute changes recorded" if leaves.empty? && !change_set.unreadable?
       notes
     end
 
@@ -75,40 +74,11 @@ module PaperView
     private
 
     def leaves
-      @leaves ||= change_set.flat_map(&:leaves)
-    end
-
-    def visible_leaves
-      @visible_leaves ||= destroyed? ? destroyed_leaves : leaves - derived_leaves
-    end
-
-    def destroyed_leaves
-      [LeafChange.new("record", item_label, nil)]
-    end
-
-    def nested_leaves
-      @nested_leaves ||= leaves.select(&:nested?)
-    end
-
-    def derived_leaves
-      @derived_leaves ||= leaves.reject(&:nested?).select do |leaf|
-        nested_leaves.any? { |nested| nested.flat_path == leaf.path && nested.same_values?(leaf) }
-      end
-    end
-
-    def derived_note
-      "+ derived #{"field".pluralize(derived_leaves.size)} #{derived_leaves.map(&:path).join(", ")}"
+      @leaves ||= destroyed? ? [LeafChange.new("record", item_label, nil)] : change_set.flat_map(&:leaves)
     end
 
     def overflow_count
-      visible_leaves.size - MAX_LINES
-    end
-
-    def overflow_note
-      remaining = visible_leaves.drop(MAX_LINES)
-      roots = remaining.select(&:nested?).map(&:root).uniq
-      suffix = (roots.size == 1 && remaining.all?(&:nested?)) ? " in #{roots.first}" : ""
-      "+#{overflow_count} more #{"field".pluralize(overflow_count)}#{suffix}"
+      leaves.size - MAX_LINES
     end
   end
 end

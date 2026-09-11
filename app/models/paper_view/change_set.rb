@@ -3,19 +3,21 @@ module PaperView
     include Enumerable
 
     def self.for(version)
-      changes = version.changeset
-      new(changes || {}, unreadable: changes.blank? && payload?(version))
+      payload = raw_payload(version)
+      changes = Payload.parse(payload)
+      new(changes || {}, raw: payload, unreadable: changes.nil? && payload.present?)
+    end
+
+    def self.raw_payload(version)
+      version.object_changes if version.respond_to?(:object_changes)
     rescue
-      new({}, unreadable: true)
+      nil
     end
 
-    def self.payload?(version)
-      version.respond_to?(:object_changes) && version.object_changes.present?
-    end
+    attr_reader :entries, :raw
 
-    attr_reader :entries
-
-    def initialize(raw_changes, unreadable: false)
+    def initialize(raw_changes, raw: nil, unreadable: false)
+      @raw = raw
       @unreadable = unreadable
       @entries = raw_changes.filter_map do |name, pair|
         next unless pair.is_a?(Array) && pair.size == 2
@@ -39,8 +41,8 @@ module PaperView
       entries.size
     end
 
-    def to_filtered_hash
-      PaperView.parameter_filter.filter(entries.to_h { |entry| [entry.name, [entry.old_value, entry.new_value]] })
+    def raw_text
+      @raw_text ||= raw.is_a?(Hash) ? AttributeChange.json(raw, pretty: true) : raw.to_s
     end
   end
 end
