@@ -1,3 +1,4 @@
+<% numbered = change.multiline? %>
 <table class="pv-diff pv-diff--split">
   <colgroup>
     <col class="pv-diff__col-gutter">
@@ -10,20 +11,12 @@
     <% change.paired_rows.each do |left, right| %>
       <tr>
         <% if left&.gap? %>
-          <td class="pv-diff__gap" colspan="4"><%= left.text %></td>
+          <%= tag.td(left.text, class: "pv-diff__gap", colspan: 4) %>
         <% else %>
-          <td class="pv-diff__gutter">
-            <%= left&.old_number if change.multiline? %>
-          </td>
-          <td class="pv-diff__code pv-diff__code--<%= left ? left.type : "empty" %>">
-            <%= left&.text %>
-          </td>
-          <td class="pv-diff__gutter">
-            <%= right&.new_number if change.multiline? %>
-          </td>
-          <td class="pv-diff__code pv-diff__code--<%= right ? right.type : "empty" %>">
-            <%= right&.text %>
-          </td>
+          <%= tag.td(numbered ? left&.old_number : nil, class: "pv-diff__gutter") %>
+          <%= paper_view_diff_cell(left) %>
+          <%= tag.td(numbered ? right&.new_number : nil, class: "pv-diff__gutter") %>
+          <%= paper_view_diff_cell(right) %>
         <% end %>
       </tr>
     <% end %>

@@ -1,46 +1,30 @@
-<%= form_with url: versions_path, method: :get, local: true, data: {turbo: false} do %>
-  <div class="pv-filters">
-    <div class="pv-field">
-      <label for="pv-item-type">Item type</label>
-      <select id="pv-item-type" name="item_type" class="pv-input">
-        <option value="">All types</option>
-        <%= options_for_select(item_types, query.item_type) %>
-      </select>
-    </div>
+<%= form_with url: versions_path, method: :get, local: true, data: {turbo: false}, class: "pv-search" do %>
+  <div class="pv-field pv-field--grow">
+    <label for="pv-item-type">Item type</label>
+    <select id="pv-item-type" name="item_type" class="pv-input" <%= "autofocus" if autofocus %>>
+      <option value="">Choose a type…</option>
+      <%= options_for_select(item_types, query.item_type) %>
+    </select>
+  </div>
 
-    <div class="pv-field">
-      <label for="pv-item-id">Item ID</label>
-      <input id="pv-item-id" type="text" name="item_id" value="<%= query.item_id %>" class="pv-input" placeholder="e.g. 42" autocomplete="off">
-    </div>
+  <div class="pv-field">
+    <label for="pv-item-id">Item ID</label>
+    <input id="pv-item-id" type="text" name="item_id" value="<%= query.item_id %>"
+           class="pv-input" placeholder="any" autocomplete="off" inputmode="numeric">
+  </div>
 
-    <div class="pv-field">
-      <label for="pv-event">Event</label>
-      <select id="pv-event" name="event" class="pv-input">
-        <option value="">All events</option>
-        <%= options_for_select(PaperView::VersionQuery::EVENTS, query.event) %>
-      </select>
-    </div>
+  <div class="pv-field">
+    <label for="pv-event">Event</label>
+    <select id="pv-event" name="event" class="pv-input">
+      <option value="">Any event</option>
+      <%= options_for_select(PaperView::VersionQuery::EVENTS, query.event) %>
+    </select>
+  </div>
 
-    <div class="pv-field">
-      <label for="pv-whodunnit">Whodunnit</label>
-      <input id="pv-whodunnit" type="text" name="whodunnit" value="<%= query.whodunnit %>" class="pv-input" placeholder="user id" autocomplete="off">
-    </div>
-
-    <div class="pv-field">
-      <label for="pv-from">From</label>
-      <input id="pv-from" type="date" name="from" value="<%= query.from&.to_date&.iso8601 %>" class="pv-input">
-    </div>
-
-    <div class="pv-field">
-      <label for="pv-to">To</label>
-      <input id="pv-to" type="date" name="to" value="<%= query.to&.to_date&.iso8601 %>" class="pv-input">
-    </div>
-
-    <div class="pv-filters__actions">
-      <button type="submit" class="pv-btn pv-btn--primary">Apply</button>
-      <% if query.filtered? %>
-        <%= link_to "Reset", versions_path, class: "pv-btn" %>
-      <% end %>
-    </div>
+  <div class="pv-field pv-field--actions">
+    <button type="submit" class="pv-btn pv-btn--primary">Show history</button>
+    <% if query.scoped? %>
+      <%= link_to "Reset", versions_path, class: "pv-btn" %>
+    <% end %>
   </div>
 <% end %>

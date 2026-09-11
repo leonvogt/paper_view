@@ -1,72 +1,87 @@
-<% content_for :title, "Versions" %>
+<% content_for :title, @query.scoped? ? @query.label : "Versions" %>
 
-<section class="pv-panel">
-  <div class="pv-panel__body">
-    <%= render "paper_view/versions/filters", query: @query, item_types: @item_types %>
-  </div>
-</section>
+<% unless @query.scoped? %>
+  <section class="pv-panel pv-panel--hero">
+    <div class="pv-hero">
+      <h1 class="pv-hero__title">Which record's history?</h1>
+      <p class="pv-hero__hint">Pick an item type — add an ID to follow a single record.</p>
 
-<section class="pv-panel">
-  <div class="pv-panel__head">
-    <span><%= number_with_delimiter(@paginator.total_count) %> <%= "version".pluralize(@paginator.total_count) %></span>
-    <% if @query.filtered? %><span class="pv-chip pv-chip--changed">filtered</span><% end %>
-    <span class="pv-spacer pv-muted">
-      <%= number_with_delimiter(@paginator.first_item) %>–<%= number_with_delimiter(@paginator.last_item) %>
-    </span>
-  </div>
+      <div class="pv-hero__search">
+        <%= render "paper_view/versions/filters", query: @query, item_types: @item_types, autofocus: true %>
+      </div>
 
-  <% if @versions.empty? %>
-    <p class="pv-empty">No versions match the current filters.</p>
-  <% else %>
-    <div class="pv-table-wrap">
-      <table class="pv-table">
-        <thead>
-          <tr>
-            <th>Version</th>
-            <th>Event</th>
-            <th>Item</th>
-            <th>Changed attributes</th>
-            <th>Whodunnit</th>
-            <th>Created</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @versions.each do |version| %>
-            <% names = @change_sets[version].names %>
-            <tr>
-              <td class="pv-mono pv-table__nowrap">#<%= version.id %></td>
-              <td><span class="pv-badge pv-badge--<%= version.event %>"><%= version.event %></span></td>
-              <td class="pv-table__nowrap">
-                <%= link_to paper_view_item_label(version), versions_path(item_type: version.item_type, item_id: version.item_id) %>
-              </td>
-              <td>
-                <% if @change_sets[version].unreadable? %>
-                  <span class="pv-chip pv-chip--removed" title="PaperTrail could not deserialize this payload">unreadable</span>
-                <% elsif names.empty? %>
-                  <span class="pv-muted">—</span>
-                <% else %>
-                  <%= safe_join(names.first(5).map { |name| tag.span(name, class: "pv-chip") }, " ") %>
-                  <% if names.size > 5 %>
-                    <span class="pv-muted">+<%= names.size - 5 %> more</span>
-                  <% end %>
-                <% end %>
-              </td>
-              <td class="pv-table__nowrap">
-                <% if version.whodunnit.present? %>
-                  <%= link_to paper_view_whodunnit(version), versions_path(whodunnit: version.whodunnit) %>
-                <% else %>
-                  <span class="pv-muted">—</span>
-                <% end %>
-              </td>
-              <td class="pv-table__nowrap pv-muted"><%= paper_view_time(version.created_at) %></td>
-              <td class="pv-table__nowrap"><%= link_to "Inspect →", version_path(version) %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+      <% if @item_types.empty? %>
+        <p class="pv-hero__note">No versions have been recorded yet.</p>
+      <% end %>
+    </div>
+  </section>
+<% else %>
+  <section class="pv-panel">
+    <div class="pv-panel__body">
+      <%= render "paper_view/versions/filters", query: @query, item_types: @item_types, autofocus: false %>
+    </div>
+  </section>
+
+  <section class="pv-panel">
+    <div class="pv-panel__head">
+      <span><%= @query.label %></span>
+      <span class="pv-muted">
+        <%= number_with_delimiter(@paginator.total_count) %> <%= "version".pluralize(@paginator.total_count) %>
+      </span>
+      <span class="pv-spacer pv-muted">
+        <%= number_with_delimiter(@paginator.first_item) %>–<%= number_with_delimiter(@paginator.last_item) %>
+      </span>
     </div>
 
-    <%= render "paper_view/versions/pagination", paginator: @paginator %>
-  <% end %>
-</section>
+    <% if @versions.empty? %>
+      <p class="pv-empty">No versions recorded for <%= @query.label %>.</p>
+    <% else %>
+      <div class="pv-table-wrap">
+        <table class="pv-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Event</th>
+              <th>Changed attributes</th>
+              <th>Whodunnit</th>
+              <th>Created</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @versions.each do |version| %>
+              <% names = @change_sets[version].names %>
+              <tr>
+                <td class="pv-table__nowrap pv-table__key">
+                  <%= link_to paper_view_item_label(version),
+                        versions_path(item_type: version.item_type, item_id: version.item_id),
+                        class: "pv-link-plain" %>
+                </td>
+                <td class="pv-table__nowrap"><%= version.event %></td>
+                <td class="pv-table__key">
+                  <% if @change_sets[version].unreadable? %>
+                    <span class="pv-chip" title="PaperTrail could not deserialize this payload">unreadable</span>
+                  <% elsif names.empty? %>
+                    <span class="pv-muted">—</span>
+                  <% else %>
+                    <%= safe_join(names.first(8).map { |name| tag.span(name, class: "pv-chip") }, " ") %>
+                    <% if names.size > 8 %>
+                      <span class="pv-muted">+<%= names.size - 8 %> more</span>
+                    <% end %>
+                  <% end %>
+                </td>
+                <td class="pv-table__nowrap pv-table__meta"><%= paper_view_whodunnit(version) %></td>
+                <td class="pv-table__nowrap pv-table__meta"><%= paper_view_time(version.created_at) %></td>
+                <td class="pv-table__nowrap">
+                  <%= link_to "##{version.id} →", version_path(version) %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <%= render "paper_view/versions/pagination", paginator: @paginator %>
+    <% end %>
+  </section>
+<% end %>

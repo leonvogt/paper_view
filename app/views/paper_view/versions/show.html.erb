@@ -1,8 +1,7 @@
 <% content_for :title, "Version ##{@version.id}" %>
 
 <div class="pv-row">
-  <%= link_to "← All versions", versions_path, class: "pv-btn" %>
-  <%= link_to "All versions of #{paper_view_item_label(@version)}",
+  <%= link_to "← #{paper_view_item_label(@version)} history",
         versions_path(item_type: @version.item_type, item_id: @version.item_id), class: "pv-btn" %>
   <span class="pv-spacer"></span>
   <% if @previous_version %>
@@ -15,7 +14,7 @@
 
 <section class="pv-panel">
   <div class="pv-panel__head">
-    <span class="pv-badge pv-badge--<%= @version.event %>"><%= @version.event %></span>
+    <span><%= @version.event %></span>
     <span><%= paper_view_item_label(@version) %></span>
     <span class="pv-muted pv-mono">version #<%= @version.id %></span>
 
@@ -87,7 +86,7 @@
 
     <details class="pv-raw">
       <summary>Raw object_changes</summary>
-      <pre><%= paper_view_pretty_json(@change_set.to_filtered_hash) %></pre>
+      <%= tag.pre(paper_view_pretty_json(@change_set.to_filtered_hash)) %>
     </details>
   <% end %>
 </section>

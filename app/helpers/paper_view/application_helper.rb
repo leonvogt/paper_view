@@ -40,6 +40,20 @@ module PaperView
       request.query_parameters.except("page").merge(overrides)
     end
 
+    def paper_view_diff_cell(row, sign: false)
+      type = row ? row.type : :empty
+      content =
+        if row.nil?
+          nil
+        elsif sign
+          safe_join([tag.span(paper_view_diff_sign(type), class: "pv-diff__sign pv-diff__sign--#{type}"), row.text])
+        else
+          row.text
+        end
+
+      tag.td(content, class: "pv-diff__code pv-diff__code--#{type}")
+    end
+
     def paper_view_diff_sign(type)
       case type
       when :added then "+"
