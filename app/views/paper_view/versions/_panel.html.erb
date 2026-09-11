@@ -26,11 +26,13 @@
     <% if row.change_set.unreadable? %>
       <p class="pv-detail__note">
         The <code>object_changes</code> payload is neither readable YAML nor
-        JSON, so it cannot be diffed. The stored bytes are below under
-        <strong>Raw object_changes</strong>.
+        JSON, so it cannot be diffed.
+        <% unless row.created? %>
+          The stored bytes are below under <strong>Raw object_changes</strong>.
+        <% end %>
       </p>
     <% else %>
-      <span class="pv-label"><%= row.change_set.size %> changed <%= "field".pluralize(row.change_set.size) %></span>
+      <span class="pv-label"><%= row.change_label %></span>
 
       <% if row.change_set.empty? %>
         <p class="pv-detail__note">
@@ -42,7 +44,11 @@
         <div class="pv-attribute">
           <span class="pv-attribute__name"><%= change.name %></span>
 
-          <% if change.nested? %>
+          <% if row.created? %>
+            <div class="pv-bars">
+              <div class="pv-bar pv-bar--new"><%= change.new_text %></div>
+            </div>
+          <% elsif change.nested? %>
             <% change.leaf_changes.each do |leaf| %>
               <div class="pv-keys">
                 <span class="pv-keys__name"><%= leaf.path %></span>
@@ -83,44 +89,46 @@
       <% end %>
     <% end %>
 
-    <div class="pv-disclosures">
-      <button
-        type="button"
-        class="pv-disclosure"
-        aria-expanded="false"
-        aria-controls="pv-raw-<%= row.id %>"
-        data-pv-toggle="pv-raw-<%= row.id %>"
-      >
-        <span class="pv-disclosure__arrow">▸</span> Raw object_changes
-      </button>
+    <% unless row.created? %>
+      <div class="pv-disclosures">
+        <button
+          type="button"
+          class="pv-disclosure"
+          aria-expanded="false"
+          aria-controls="pv-raw-<%= row.id %>"
+          data-pv-toggle="pv-raw-<%= row.id %>"
+        >
+          <span class="pv-disclosure__arrow">▸</span> Raw object_changes
+        </button>
 
-      <button
-        type="button"
-        class="pv-disclosure pv-disclosure--end"
-        aria-expanded="false"
-        aria-controls="pv-reify-<%= row.id %>"
-        data-pv-toggle="pv-reify-<%= row.id %>"
-      >
-        <span class="pv-disclosure__arrow">▸</span> Reify
-      </button>
+        <button
+          type="button"
+          class="pv-disclosure pv-disclosure--end"
+          aria-expanded="false"
+          aria-controls="pv-reify-<%= row.id %>"
+          data-pv-toggle="pv-reify-<%= row.id %>"
+        >
+          <span class="pv-disclosure__arrow">▸</span> Reify
+        </button>
 
-      <pre class="pv-raw" id="pv-raw-<%= row.id %>" hidden><%= row.change_set.raw_text %></pre>
+        <pre class="pv-raw" id="pv-raw-<%= row.id %>" hidden><%= row.change_set.raw_text %></pre>
 
-      <div class="pv-snippet" id="pv-reify-<%= row.id %>" hidden>
-        <div class="pv-snippet__head">
-          <span class="pv-snippet__label">Rails console</span>
+        <div class="pv-snippet" id="pv-reify-<%= row.id %>" hidden>
+          <div class="pv-snippet__head">
+            <span class="pv-snippet__label">Rails console</span>
 
-          <button
-            type="button"
-            class="pv-snippet__copy"
-            data-pv-copy="pv-snippet-<%= row.id %>"
-          >
-            Copy
-          </button>
+            <button
+              type="button"
+              class="pv-snippet__copy"
+              data-pv-copy="pv-snippet-<%= row.id %>"
+            >
+              Copy
+            </button>
+          </div>
+
+          <pre class="pv-snippet__code" id="pv-snippet-<%= row.id %>"><%= row.console_snippet %></pre>
         </div>
-
-        <pre class="pv-snippet__code" id="pv-snippet-<%= row.id %>"><%= row.console_snippet %></pre>
       </div>
-    </div>
+    <% end %>
   </div>
 </section>

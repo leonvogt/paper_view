@@ -42,17 +42,28 @@ module PaperView
       "#{burst_size} versions within 1s"
     end
 
+    def created?
+      event == "create"
+    end
+
     def destroyed?
       event == "destroy"
     end
 
+    def change_label
+      noun = created? ? "initial value" : "changed field"
+      "#{change_set.size} #{noun.pluralize(change_set.size)}"
+    end
+
     def lines
-      leaves.first(MAX_LINES)
+      created? ? [] : leaves.first(MAX_LINES)
     end
 
     def footnotes
       notes = []
       notes << "payload not deserializable" if change_set.unreadable?
+      return notes if created?
+
       notes << "..." if overflow_count.positive?
       notes << "no attribute changes recorded" if leaves.empty? && !change_set.unreadable?
       notes
