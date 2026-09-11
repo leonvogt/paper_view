@@ -3,6 +3,8 @@
 A lightweight, mountable dashboard for [paper_trail](https://github.com/paper-trail-gem/paper_trail).
 Browse the `versions` table and read, in one chronological timeline, what actually changed.   
 
+![preview](https://res.cloudinary.com/dlvuixik3/image/upload/v1789159345/paper_view_screenshot_qnolah.png)
+
 ## Installation
 
 ### 1. Add the gem
