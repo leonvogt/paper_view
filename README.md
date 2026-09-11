@@ -52,6 +52,9 @@ PaperView.setup do |config|
   config.time_format = "%Y-%m-%d %H:%M:%S"
 
   config.per_page = 25
+
+  # Any model with the paper_trail column layout works here.
+  config.version_class_name = "PaperTrail::Version"
 end
 ```
 

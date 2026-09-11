@@ -21,5 +21,4 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "railties", ">= 7.0"
   spec.add_dependency "activerecord", ">= 7.0"
-  spec.add_dependency "paper_trail", ">= 12.0"
 end

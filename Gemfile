@@ -9,4 +9,5 @@ group :development, :test do
   gem "debug"
   gem "standard"
   gem "rspec"
+  gem "paper_trail"
 end
