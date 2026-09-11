@@ -3,8 +3,6 @@
 A lightweight, mountable dashboard for [paper_trail](https://github.com/paper-trail-gem/paper_trail).
 Browse the `versions` table and read, in one chronological timeline, what actually changed.   
 
-Runtime dependencies: `railties`, `activerecord`, `paper_trail`. Nothing else.
-
 ## Installation
 
 ### 1. Add the gem
@@ -48,6 +46,7 @@ PaperView.setup do |config|
   config.per_page = 25
 
   # Any model with the paper_trail column layout works here.
+  # Required interface: id, item_type, item_id, event, whodunnit, created_at, object_changes
   config.version_class_name = "PaperTrail::Version"
 end
 ```
