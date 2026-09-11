@@ -15,6 +15,17 @@
     }
   });
 
+  document.addEventListener("change", function (event) {
+    var select = event.target.closest("select[data-pv-autosubmit]");
+    if (!select || !select.form) return;
+
+    if (select.form.requestSubmit) {
+      select.form.requestSubmit();
+    } else {
+      select.form.submit();
+    }
+  });
+
   window.addEventListener("pageshow", function () {
     document.querySelectorAll(".pv-btn--busy").forEach(function (button) {
       button.classList.remove("pv-btn--busy");

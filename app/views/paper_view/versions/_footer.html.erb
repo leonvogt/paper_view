@@ -1,0 +1,35 @@
+<div class="pv-footer">
+  <nav class="pv-pagination">
+    <% if paginator.total_pages > 1 %>
+      <% if paginator.previous_page %>
+        <%= link_to "← Previous", versions_path(paper_view_filter_params("page" => paginator.previous_page)), class: "pv-btn" %>
+      <% else %>
+        <span class="pv-btn pv-btn--disabled">← Previous</span>
+      <% end %>
+
+      <% paginator.page_numbers.each do |number| %>
+        <% if number == :gap %>
+          <span class="pv-pagination__gap">…</span>
+        <% elsif number == paginator.page %>
+          <span class="pv-pagination__page pv-pagination__page--current"><%= number %></span>
+        <% else %>
+          <%= link_to number, versions_path(paper_view_filter_params("page" => number)), class: "pv-pagination__page" %>
+        <% end %>
+      <% end %>
+
+      <% if paginator.next_page %>
+        <%= link_to "Next →", versions_path(paper_view_filter_params("page" => paginator.next_page)), class: "pv-btn" %>
+      <% else %>
+        <span class="pv-btn pv-btn--disabled">Next →</span>
+      <% end %>
+    <% end %>
+  </nav>
+
+  <%= form_with url: versions_path, method: :get, local: true, data: {turbo: false}, class: "pv-footer__end" do %>
+    <%= paper_view_hidden_filters(except: :per_page) %>
+    <label class="pv-muted" for="pv-per-page">Per page</label>
+    <select id="pv-per-page" name="per_page" class="pv-select-mini" data-pv-autosubmit>
+      <%= options_for_select(paginator.per_page_options, paginator.per_page) %>
+    </select>
+  <% end %>
+</div>

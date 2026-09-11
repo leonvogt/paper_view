@@ -1,6 +1,7 @@
 module PaperView
   class Paginator
     WINDOW = 2
+    PER_PAGE_OPTIONS = [25, 50, 100, 500].freeze
 
     attr_reader :page, :per_page, :total_count
 
@@ -9,6 +10,10 @@ module PaperView
       @per_page = per_page.to_i.clamp(1, 200)
       @total_count = relation.count(:all)
       @page = page.to_i.clamp(1, [total_pages, 1].max)
+    end
+
+    def per_page_options
+      (PER_PAGE_OPTIONS + [per_page]).uniq.sort
     end
 
     def records
@@ -21,14 +26,6 @@ module PaperView
 
     def offset
       (page - 1) * per_page
-    end
-
-    def first_item
-      total_count.zero? ? 0 : offset + 1
-    end
-
-    def last_item
-      [offset + per_page, total_count].min
     end
 
     def first_page?

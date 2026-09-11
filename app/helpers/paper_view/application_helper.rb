@@ -68,6 +68,11 @@ module PaperView
       value.inspect
     end
 
+    def paper_view_hidden_filters(except: [])
+      excluded = Array(except).map(&:to_s)
+      safe_join(paper_view_filter_params.except(*excluded).map { |name, value| hidden_field_tag(name, value, id: nil) })
+    end
+
     def paper_view_nonce_attributes
       {nonce: content_security_policy_nonce}
     end

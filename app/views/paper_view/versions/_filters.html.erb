@@ -1,4 +1,6 @@
 <%= form_with url: versions_path, method: :get, local: true, data: {turbo: false}, class: "pv-search" do %>
+  <%= paper_view_hidden_filters(except: %i[item_type item_id event]) %>
+
   <div class="pv-field pv-field--grow">
     <label for="pv-item-type">Item type</label>
     <input id="pv-item-type" type="text" name="item_type" value="<%= query.item_type %>" class="pv-input"

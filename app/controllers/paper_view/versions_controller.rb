@@ -8,7 +8,7 @@ module PaperView
       @item_types = VersionQuery.item_types
       return unless @query.submitted?
 
-      @paginator = Paginator.new(@query.relation, page: params[:page], per_page: PaperView.config.per_page)
+      @paginator = Paginator.new(@query.relation, page: params[:page], per_page: params[:per_page].presence || PaperView.config.per_page)
       @versions = @paginator.records
       @change_sets = @versions.index_with { |version| ChangeSet.for(version) }
     end

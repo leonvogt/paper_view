@@ -26,9 +26,14 @@
       <span class="pv-muted">
         <%= number_with_delimiter(@paginator.total_count) %> <%= "version".pluralize(@paginator.total_count) %>
       </span>
-      <span class="pv-spacer pv-muted">
-        <%= number_with_delimiter(@paginator.first_item) %>–<%= number_with_delimiter(@paginator.last_item) %>
-      </span>
+      <span class="pv-spacer"></span>
+      <%= form_with url: versions_path, method: :get, local: true, data: {turbo: false}, class: "pv-head-form" do %>
+        <%= paper_view_hidden_filters(except: :sort) %>
+        <select id="pv-sort" name="sort" class="pv-select-mini" data-pv-autosubmit aria-label="Sort order">
+          <option value="desc" <%= "selected" if @query.sort == "desc" %>>Newest first</option>
+          <option value="asc" <%= "selected" if @query.sort == "asc" %>>Oldest first</option>
+        </select>
+      <% end %>
     </div>
 
     <% if @versions.empty? %>
@@ -79,7 +84,7 @@
         </table>
       </div>
 
-      <%= render "paper_view/versions/pagination", paginator: @paginator %>
+      <%= render "paper_view/versions/footer", paginator: @paginator %>
     <% end %>
   </section>
 <% end %>
