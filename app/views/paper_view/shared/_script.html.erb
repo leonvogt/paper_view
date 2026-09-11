@@ -1,8 +1,24 @@
 <%= javascript_tag nonce: true do %>
   document.addEventListener("submit", function (event) {
-    var form = event.target.closest("form[data-pv-confirm]");
-    if (form && !window.confirm(form.getAttribute("data-pv-confirm"))) {
+    var form = event.target;
+    var confirmation = form.getAttribute("data-pv-confirm");
+
+    if (confirmation && !window.confirm(confirmation)) {
       event.preventDefault();
+      return;
     }
+
+    var button = form.querySelector("button[type=submit]");
+    if (button && !button.querySelector(".pv-spinner")) {
+      button.classList.add("pv-btn--busy");
+      button.insertAdjacentHTML("beforeend", '<span class="pv-spinner"></span>');
+    }
+  });
+
+  window.addEventListener("pageshow", function () {
+    document.querySelectorAll(".pv-btn--busy").forEach(function (button) {
+      button.classList.remove("pv-btn--busy");
+      button.querySelectorAll(".pv-spinner").forEach(function (spinner) { spinner.remove(); });
+    });
   });
 <% end %>

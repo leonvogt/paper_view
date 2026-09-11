@@ -149,6 +149,18 @@
   .pv-btn--danger { border-color: var(--pv-red); color: var(--pv-red); }
   .pv-btn--danger:hover { background: var(--pv-red-bg); }
   .pv-btn[disabled], .pv-btn--disabled { opacity: .45; pointer-events: none; }
+  .pv-btn--busy { opacity: .75; pointer-events: none; }
+
+  .pv-spinner {
+    width: 13px;
+    height: 13px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: pv-spin .6s linear infinite;
+  }
+  @keyframes pv-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .pv-spinner { animation-duration: 2.4s; } }
 
   .pv-chip {
     display: inline-block;

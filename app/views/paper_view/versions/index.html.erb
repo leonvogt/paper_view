@@ -3,9 +3,7 @@
 <% unless @query.scoped? %>
   <section class="pv-panel pv-panel--hero">
     <div class="pv-hero">
-      <h1 class="pv-hero__title">Which record's history?</h1>
-      <p class="pv-hero__hint">Pick an item type — add an ID to follow a single record.</p>
-
+      <h1 class="pv-hero__title">Which trail to follow?</h1>
       <div class="pv-hero__search">
         <%= render "paper_view/versions/filters", query: @query, item_types: @item_types, autofocus: true %>
       </div>
