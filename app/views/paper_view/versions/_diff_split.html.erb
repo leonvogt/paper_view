@@ -1,0 +1,31 @@
+<table class="pv-diff pv-diff--split">
+  <colgroup>
+    <col class="pv-diff__col-gutter">
+    <col>
+    <col class="pv-diff__col-gutter">
+    <col>
+  </colgroup>
+
+  <tbody>
+    <% change.paired_rows.each do |left, right| %>
+      <tr>
+        <% if left&.gap? %>
+          <td class="pv-diff__gap" colspan="4"><%= left.text %></td>
+        <% else %>
+          <td class="pv-diff__gutter">
+            <%= left&.old_number if change.multiline? %>
+          </td>
+          <td class="pv-diff__code pv-diff__code--<%= left ? left.type : "empty" %>">
+            <%= left&.text %>
+          </td>
+          <td class="pv-diff__gutter">
+            <%= right&.new_number if change.multiline? %>
+          </td>
+          <td class="pv-diff__code pv-diff__code--<%= right ? right.type : "empty" %>">
+            <%= right&.text %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

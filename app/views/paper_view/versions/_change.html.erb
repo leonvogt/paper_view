@@ -1,0 +1,14 @@
+<div class="pv-change">
+  <div class="pv-change__head">
+    <span class="pv-change__name"><%= change.name %></span>
+    <span class="pv-chip pv-chip--<%= change.status %>"><%= change.status %></span>
+  </div>
+
+  <% if change.filtered? %>
+    <p class="pv-change__note">Value hidden because the attribute matches <code>config.filter_parameters</code>.</p>
+  <% elsif change.rows.empty? %>
+    <p class="pv-change__note">Both values are empty.</p>
+  <% else %>
+    <%= render "paper_view/versions/diff_#{mode}", change: change %>
+  <% end %>
+</div>

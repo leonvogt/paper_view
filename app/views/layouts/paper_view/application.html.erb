@@ -1,17 +1,32 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Paper view</title>
-  <%= csrf_meta_tags %>
-  <%= csp_meta_tag %>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="turbo-visit-control" content="reload">
+    <meta name="robots" content="noindex, nofollow">
+    <title><%= content_for?(:title) ? "#{yield(:title)} · PaperView" : "PaperView" %></title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= render "paper_view/shared/styles" %>
+  </head>
+  <body>
+    <header class="pv-header">
+      <%= link_to root_path, class: "pv-header__brand" do %>
+        <span class="pv-header__dot"></span>
+        PaperView
+      <% end %>
+      <span class="pv-muted pv-mono">PaperTrail versions</span>
+      <% if main_app.respond_to?(:root_path) %>
+        <span class="pv-header__meta"><%= link_to "← Back to app", main_app.root_path %></span>
+      <% end %>
+    </header>
 
-  <%= yield :head %>
+    <main class="pv-main pv-stack">
+      <%= render "paper_view/shared/flash" %>
+      <%= yield %>
+    </main>
 
-  <%= stylesheet_link_tag    "paper_view/application", media: "all" %>
-</head>
-<body>
-
-<%= yield %>
-
-</body>
+    <%= render "paper_view/shared/script" %>
+  </body>
 </html>

@@ -1,22 +1,28 @@
 require_relative "lib/paper_view/version"
 
 Gem::Specification.new do |spec|
-  spec.name        = "paper_view"
-  spec.version     = PaperView::VERSION
-  spec.authors     = [ "Leon" ]
-  spec.email       = [ "lv@oxon.ch" ]
-  spec.homepage    = "https://github.com/leonvogt/paper_view"
-  spec.summary     = "Dashboard to interact with paper_trail versions table"
-  spec.description = "Dashboard to interact with paper_trail versions table"
-  spec.license     = "MIT"
+  spec.name = "paper_view"
+  spec.version = PaperView::VERSION
+  spec.authors = ["Leon"]
+  spec.email = ["lv@oxon.ch"]
+  spec.homepage = "https://github.com/leonvogt/paper_view"
+  spec.summary = "Lightweight dashboard to browse, diff and revert PaperTrail versions"
+  spec.description = "PaperView is a mountable Rails engine that turns the paper_trail versions " \
+                     "table into a searchable dashboard with a side-by-side diff viewer and one-click rollbacks. " \
+                     "It ships its own styles, so it never touches the host application's assets."
+  spec.license = "MIT"
+  spec.required_ruby_version = ">= 3.1"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/leonvogt/paper_view"
-  spec.metadata["changelog_uri"] = "https://github.com/leonvogt/paper_view"
+  spec.metadata["source_code_uri"] = spec.homepage
+  spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
+  spec.metadata["rubygems_mfa_required"] = "true"
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+    Dir["{app,config,lib}/**/*", "MIT-LICENSE", "README.md"]
   end
 
-  spec.add_dependency "rails", ">= 8.0.5.1"
+  spec.add_dependency "railties", ">= 7.0"
+  spec.add_dependency "activerecord", ">= 7.0"
+  spec.add_dependency "paper_trail", ">= 12.0"
 end

@@ -1,0 +1,8 @@
+<%= javascript_tag nonce: true do %>
+  document.addEventListener("submit", function (event) {
+    var form = event.target.closest("form[data-pv-confirm]");
+    if (form && !window.confirm(form.getAttribute("data-pv-confirm"))) {
+      event.preventDefault();
+    }
+  });
+<% end %>

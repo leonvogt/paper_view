@@ -1,0 +1,20 @@
+<table class="pv-diff pv-diff--inline">
+  <colgroup>
+    <col class="pv-diff__col-gutter">
+    <col class="pv-diff__col-gutter">
+    <col>
+  </colgroup>
+  <tbody>
+    <% change.rows.each do |row| %>
+      <% if row.gap? %>
+        <tr><td class="pv-diff__gap" colspan="3"><%= row.text %></td></tr>
+      <% else %>
+        <tr>
+          <td class="pv-diff__gutter"><%= row.old_number if change.multiline? %></td>
+          <td class="pv-diff__gutter"><%= row.new_number if change.multiline? %></td>
+          <td class="pv-diff__code pv-diff__code--<%= row.type %>"><span class="pv-diff__sign pv-diff__sign--<%= row.type %>"><%= paper_view_diff_sign(row.type) %></span><%= row.text %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

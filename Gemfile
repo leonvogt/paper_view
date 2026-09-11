@@ -2,11 +2,10 @@ source "https://rubygems.org"
 
 gemspec
 
-gem "puma"
-gem "pg"
-
 group :development, :test do
-  gem "pry"
-  gem "standard"
+  gem "rails"
+  gem "sqlite3"
+  gem "puma"
   gem "debug"
+  gem "standard"
 end
