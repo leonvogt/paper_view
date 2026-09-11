@@ -6,10 +6,6 @@ module PaperView
 
     attr_reader :item_type, :item_id, :event, :sort
 
-    def self.item_types
-      PaperView.version_class.distinct.order(:item_type).pluck(:item_type)
-    end
-
     def initialize(params = {})
       @submitted = FILTER_KEYS.any? { |key| params.key?(key) }
       @item_type = params[:item_type].presence
@@ -22,9 +18,13 @@ module PaperView
       @submitted
     end
 
+    def item_types
+      @item_types ||= ItemTypes.all
+    end
+
     def relation
       scope = PaperView.version_class.all
-      scope = scope.where(item_type: item_type) if item_type
+      scope = scope.where(item_type: searched_item_types) if searched_item_types
       scope = scope.where(item_id: item_id) if item_id
       scope = scope.where(event: event) if event
       scope.order(created_at: sort.to_sym, id: sort.to_sym)
@@ -33,6 +33,14 @@ module PaperView
     def label
       return "All versions" unless item_type
       item_id ? "#{item_type} ##{item_id}" : item_type
+    end
+
+    private
+
+    def searched_item_types
+      return @searched_item_types if defined?(@searched_item_types)
+
+      @searched_item_types = item_type || (item_types if item_id)
     end
   end
 end
