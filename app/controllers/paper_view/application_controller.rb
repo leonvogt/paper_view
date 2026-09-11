@@ -5,10 +5,6 @@ module PaperView
     before_action :authenticate_paper_view!
     before_action :authorize_paper_view!
 
-    rescue_from ActiveRecord::RecordNotFound do
-      redirect_to versions_path, alert: "That version does not exist (anymore)."
-    end
-
     private
 
     def authenticate_paper_view!

@@ -1,7 +1,7 @@
 # PaperView
 
 A lightweight, mountable dashboard for [paper_trail](https://github.com/paper-trail-gem/paper_trail).
-Browse the `versions` table, read a proper diff of `object_changes`, and roll a record back.
+Browse the `versions` table and read, in one chronological timeline, what actually changed.   
 
 Runtime dependencies: `railties`, `activerecord`, `paper_trail`. Nothing else.
 
@@ -44,9 +44,6 @@ PaperView.setup do |config|
 
   # Must return a truthy value, otherwise the request is answered with 403.
   config.authorize_with { current_user.admin? }
-
-  # Same, but only for the rollback action.
-  config.authorize_revert_with { current_user.owner? }
 
   # Turn `whodunnit` into something readable.
   config.whodunnit_label = ->(whodunnit) { User.find_by(id: whodunnit)&.email || whodunnit }

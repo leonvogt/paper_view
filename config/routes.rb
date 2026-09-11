@@ -1,7 +1,5 @@
 PaperView::Engine.routes.draw do
-  resources :versions, only: %i[index show] do
-    post :revert, on: :member
-  end
+  resources :versions, only: :index
 
   root to: "versions#index"
 end

@@ -20,71 +20,48 @@
     </div>
   </section>
 
-  <section class="pv-panel">
-    <div class="pv-panel__head">
-      <span><%= @query.label %></span>
-      <span class="pv-muted">
-        <%= number_with_delimiter(@paginator.total_count) %> <%= "version".pluralize(@paginator.total_count) %>
-      </span>
-      <span class="pv-spacer"></span>
-      <%= form_with url: versions_path, method: :get, local: true, data: {turbo: false}, class: "pv-head-form" do %>
-        <%= paper_view_hidden_filters(except: :sort) %>
-        <select id="pv-sort" name="sort" class="pv-select-mini" data-pv-autosubmit aria-label="Sort order">
-          <option value="desc" <%= "selected" if @query.sort == "desc" %>>Newest first</option>
-          <option value="asc" <%= "selected" if @query.sort == "asc" %>>Oldest first</option>
-        </select>
-      <% end %>
-    </div>
-
-    <% if @versions.empty? %>
+  <% if @timeline.empty? %>
+    <section class="pv-panel">
       <p class="pv-empty">No versions match this filter.</p>
-    <% else %>
-      <div class="pv-table-wrap">
-        <table class="pv-table">
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Event</th>
-              <th>Changed attributes</th>
-              <th>Whodunnit</th>
-              <th>Created</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @versions.each do |version| %>
-              <% names = @change_sets[version].names %>
-              <tr>
-                <td class="pv-table__nowrap pv-table__key">
-                  <%= link_to paper_view_item_label(version),
-                        versions_path(item_type: version.item_type, item_id: version.item_id),
-                        class: "pv-link-plain" %>
-                </td>
-                <td class="pv-table__nowrap"><%= version.event %></td>
-                <td class="pv-table__key">
-                  <% if @change_sets[version].unreadable? %>
-                    <span class="pv-chip" title="PaperTrail could not deserialize this payload">unreadable</span>
-                  <% elsif names.empty? %>
-                    <span class="pv-muted">—</span>
-                  <% else %>
-                    <%= safe_join(names.first(8).map { |name| tag.span(name, class: "pv-chip") }, " ") %>
-                    <% if names.size > 8 %>
-                      <span class="pv-muted">+<%= names.size - 8 %> more</span>
-                    <% end %>
-                  <% end %>
-                </td>
-                <td class="pv-table__nowrap pv-table__meta"><%= paper_view_whodunnit(version) %></td>
-                <td class="pv-table__nowrap pv-table__meta"><%= paper_view_time(version.created_at) %></td>
-                <td class="pv-table__nowrap">
-                  <%= link_to "##{version.id} →", version_path(version) %>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+    </section>
+  <% else %>
+    <div class="pv-layout">
+      <section class="pv-card">
+        <div class="pv-card__head">
+          <span class="pv-card__title"><%= @timeline.title %></span>
+          <span class="pv-card__meta">
+            <%= number_with_delimiter(@paginator.total_count) %>
+            <%= "version".pluralize(@paginator.total_count) %><%= " · #{@timeline.items.size} items" if @timeline.stream? %>
+          </span>
+          <span class="pv-spacer"></span>
+          <%= form_with url: versions_path, method: :get, local: true, data: {turbo: false}, class: "pv-head-form" do %>
+            <%= paper_view_hidden_filters(except: :sort) %>
+            <select id="pv-sort" name="sort" class="pv-select-mini" data-pv-autosubmit aria-label="Sort order">
+              <option value="desc" <%= "selected" if @query.sort == "desc" %>>Newest first</option>
+              <option value="asc" <%= "selected" if @query.sort == "asc" %>>Oldest first</option>
+            </select>
+          <% end %>
+        </div>
 
-      <%= render "paper_view/versions/footer", paginator: @paginator %>
-    <% end %>
-  </section>
+        <div class="pv-timeline" data-pv-timeline>
+          <% @timeline.groups.each do |group| %>
+            <div class="pv-timeline__group">
+              <div class="pv-timeline__day"><%= group.label %></div>
+              <% group.rows.each do |row| %>
+                <%= render "paper_view/versions/timeline_row", row: row, stream: @timeline.stream?, selected: row == @timeline.selected %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <%= render "paper_view/versions/footer", paginator: @paginator %>
+      </section>
+
+      <aside class="pv-side" data-pv-panels>
+        <% @timeline.rows.each do |row| %>
+          <%= render "paper_view/versions/panel", row: row, stream: @timeline.stream?, active: row == @timeline.selected %>
+        <% end %>
+      </aside>
+    </div>
+  <% end %>
 <% end %>

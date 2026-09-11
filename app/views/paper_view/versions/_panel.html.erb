@@ -1,0 +1,87 @@
+<section class="pv-card pv-detail" data-pv-panel="<%= row.id %>" <%= "hidden" unless active %>>
+  <div class="pv-detail__head">
+    <span class="pv-detail__id">Version #<%= row.id %></span>
+    <span class="pv-detail__stamp"><%= paper_view_time(row.version.created_at) %></span>
+  </div>
+
+  <div class="pv-detail__meta<%= " pv-detail__meta--split" if stream %>">
+    <% if stream %>
+      <div class="pv-detail__field">
+        <span class="pv-label">Item</span>
+        <%= link_to row.item_label, paper_view_item_path(row.version), class: "pv-detail__item" %>
+      </div>
+    <% end %>
+    <div class="pv-detail__field">
+      <span class="pv-label">Whodunnit</span>
+      <span class="pv-detail__who"><%= paper_view_whodunnit(row.version) %></span>
+    </div>
+  </div>
+
+  <div class="pv-detail__body">
+    <% if row.change_set.unreadable? %>
+      <p class="pv-detail__note">
+        PaperTrail could not deserialize this payload. Add the classes it contains to
+        <code>ActiveRecord.yaml_column_permitted_classes</code>
+        (<code>Time</code>, <code>Date</code>, <code>ActiveSupport::TimeWithZone</code>, …).
+      </p>
+    <% else %>
+      <span class="pv-label"><%= row.change_set.size %> changed <%= "field".pluralize(row.change_set.size) %></span>
+
+      <% if row.change_set.empty? %>
+        <p class="pv-detail__note">The <code>object_changes</code> column is empty for this event.</p>
+      <% end %>
+
+      <% row.change_set.each do |change| %>
+        <div class="pv-attribute">
+          <span class="pv-attribute__name"><%= change.name %></span>
+
+          <% if change.filtered? %>
+            <p class="pv-detail__note">Hidden because the attribute matches <code>config.filter_parameters</code>.</p>
+          <% elsif change.nested? %>
+            <% change.key_changes.each do |key_change| %>
+              <div class="pv-keys">
+                <span class="pv-keys__name"><%= key_change.path %></span>
+                <div class="pv-keys__values">
+                  <span class="pv-value pv-value--old"><%= key_change.old_text %></span>
+                  <span class="pv-change__arrow">→</span>
+                  <span class="pv-value pv-value--new"><%= key_change.new_text %></span>
+                </div>
+              </div>
+            <% end %>
+            <% if change.unchanged_key_count.positive? %>
+              <span class="pv-attribute__unchanged">
+                <%= change.unchanged_key_count %> unchanged <%= "key".pluralize(change.unchanged_key_count) %>
+              </span>
+            <% end %>
+          <% else %>
+            <div class="pv-bars">
+              <div class="pv-bar pv-bar--old"><%= change.old_text.presence || "—" %></div>
+              <div class="pv-bar pv-bar--new"><%= change.new_text.presence || "—" %></div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <div class="pv-disclosures">
+      <button type="button" class="pv-disclosure" aria-expanded="false" aria-controls="pv-raw-<%= row.id %>"
+              data-pv-toggle="pv-raw-<%= row.id %>">
+        <span class="pv-disclosure__arrow">▸</span> Raw object_changes
+      </button>
+      <button type="button" class="pv-disclosure pv-disclosure--end" aria-expanded="false" aria-controls="pv-reify-<%= row.id %>"
+              data-pv-toggle="pv-reify-<%= row.id %>">
+        <span class="pv-disclosure__arrow">▸</span> Reify
+      </button>
+
+      <pre class="pv-raw" id="pv-raw-<%= row.id %>" hidden><%= paper_view_pretty_json(row.change_set.to_filtered_hash) %></pre>
+
+      <div class="pv-snippet" id="pv-reify-<%= row.id %>" hidden>
+        <div class="pv-snippet__head">
+          <span class="pv-snippet__label">Rails console</span>
+          <button type="button" class="pv-snippet__copy" data-pv-copy="pv-snippet-<%= row.id %>">Copy</button>
+        </div>
+        <pre class="pv-snippet__code" id="pv-snippet-<%= row.id %>"><%= row.console_snippet %></pre>
+      </div>
+    </div>
+  </div>
+</section>
