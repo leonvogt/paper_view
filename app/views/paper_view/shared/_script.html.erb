@@ -3,7 +3,7 @@
     var button = event.target.querySelector("button[type=submit]");
     if (button && !button.querySelector(".pv-spinner")) {
       button.classList.add("pv-btn--busy");
-      button.insertAdjacentHTML("beforeend", '<spanclass="pv-spinner"></span>');
+      button.insertAdjacentHTML("beforeend", '<span class="pv-spinner"></span>');
     }
   });
 

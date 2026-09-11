@@ -281,7 +281,17 @@
 
   .pv-attribute { display: flex; flex-direction: column; gap: 6px; }
   .pv-attribute__name { font: 600 12px/1.3 var(--pv-mono); color: var(--pv-ink); word-break: break-all; }
-  .pv-attribute__unchanged { font: 400 11px/1.4 var(--pv-sans); color: var(--pv-ink-faint); }
+  .pv-attribute__unchanged {
+    align-self: flex-start;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: 400 11px/1.4 var(--pv-sans);
+    color: var(--pv-ink-faint);
+    text-align: left;
+    cursor: pointer;
+  }
+  .pv-attribute__unchanged:hover { color: var(--pv-ink-soft); }
   .pv-bars { display: flex; flex-direction: column; gap: 3px; }
   .pv-bar { padding: 4px 8px; font: 400 12px/1.5 var(--pv-mono); white-space: pre-wrap; word-break: break-all; }
   .pv-bar--old { color: var(--pv-del); background: var(--pv-del-bg); border-left: 2px solid var(--pv-del-rule); }
