@@ -19,7 +19,7 @@ module PaperView
     end
 
     def item_types
-      @item_types ||= ItemTypes.all
+      @item_types ||= versions_table.item_types
     end
 
     def relation
@@ -37,10 +37,14 @@ module PaperView
 
     private
 
+    def versions_table
+      @versions_table ||= VersionsTable.new
+    end
+
     def searched_item_types
       return @searched_item_types if defined?(@searched_item_types)
 
-      @searched_item_types = item_type || (item_types if item_id)
+      @searched_item_types = item_type || (item_types if item_id && versions_table.item_type_indexed?)
     end
   end
 end

@@ -1,13 +1,15 @@
 module PaperView
-  class ItemTypes
-    def self.all
-      new.all
-    end
-
-    def all
-      return distinct_scan unless postgresql?
+  class VersionsTable
+    def item_types
+      return distinct_scan unless postgresql? && item_type_indexed?
 
       connection.select_values(skip_scan_sql)
+    end
+
+    def item_type_indexed?
+      return @item_type_indexed if defined?(@item_type_indexed)
+
+      @item_type_indexed = connection.indexes(version_class.table_name).any? { |index| Array(index.columns).first == "item_type" }
     end
 
     private
@@ -28,7 +30,7 @@ module PaperView
       version_class.distinct.order(:item_type).pluck(:item_type)
     end
 
-    # A plain DISTINCT reads every row. This walks the (item_type, item_id) index
+    # A plain DISTINCT reads every row. This walks the item_type index
     # and jumps straight from one item_type to the next one.
     def skip_scan_sql
       table = version_class.quoted_table_name
