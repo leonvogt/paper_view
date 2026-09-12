@@ -8,7 +8,7 @@
     <meta name="robots" content="noindex, nofollow">
 
     <title>PaperView</title>
-    <%= tag.link rel: "icon", href: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 0 100 100"><text y=".90em" font-size="90">👀</text></svg>' %>
+    <%= tag.link rel: "icon", href: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 0 100 100"><text y=".90em" font-size="90">📝</text></svg>' %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= render "paper_view/shared/styles" %>
@@ -17,7 +17,6 @@
   <body>
     <header class="pv-header">
       <%= link_to root_path, class: "pv-header__brand" do %>
-        <span class="pv-header__dot"></span>
         PaperView
       <% end %>
 
