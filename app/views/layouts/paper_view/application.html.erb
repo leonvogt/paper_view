@@ -20,6 +20,11 @@
         PaperView
       <% end %>
 
+      <nav class="pv-header__nav">
+        <%= link_to "Versions", root_path, class: paper_view_nav_class(controller_name == "versions") %>
+        <%= link_to "Stats", stats_path, class: paper_view_nav_class(controller_name == "stats") %>
+      </nav>
+
       <% if main_app.respond_to?(:root_path) %>
         <span class="pv-header__meta"><%= link_to "← Back to app", main_app.root_path %></span>
       <% end %>

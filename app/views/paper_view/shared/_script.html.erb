@@ -93,4 +93,28 @@
       if (selected) selected.scrollIntoView({block: "center"});
     }
   })();
+
+  (function () {
+    var pending = document.querySelector("[data-pv-stats]");
+    if (!pending || !window.fetch) return;
+
+    var started = Date.now();
+
+    function show(html) {
+      var elapsed = Date.now() - started;
+
+      // Nothing is on screen before 350ms, and once the skeleton is there it stays long enough to read as a load.
+      setTimeout(function () {
+        pending.innerHTML = html;
+        pending.removeAttribute("aria-busy");
+        pending.classList.remove("pv-pending");
+        pending.classList.add("pv-loaded");
+      }, elapsed < 350 ? 0 : Math.max(0, 900 - elapsed));
+    }
+
+    fetch(pending.getAttribute("data-pv-stats"), {credentials: "same-origin", headers: {"X-Requested-With": "XMLHttpRequest"}})
+      .then(function (response) { return response.ok ? response.text() : Promise.reject(response); })
+      .then(show)
+      .catch(function () { window.location.href = pending.getAttribute("data-pv-stats"); });
+  })();
 <% end %>

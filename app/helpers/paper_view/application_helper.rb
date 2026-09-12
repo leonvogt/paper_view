@@ -14,6 +14,16 @@ module PaperView
       tag.time(time.strftime(PaperView.config.time_format), datetime: time.iso8601, title: time.iso8601)
     end
 
+    def paper_view_bytes(bytes)
+      return EMPTY if bytes.nil?
+
+      number_to_human_size(bytes, precision: 3, significant: true, strip_insignificant_zeros: true)
+    end
+
+    def paper_view_percentage(share)
+      number_to_percentage(share * 100, precision: 1, significant: false, strip_insignificant_zeros: false)
+    end
+
     def paper_view_item_path(version)
       versions_path(item_type: version.item_type, item_id: version.item_id)
     end
@@ -25,6 +35,10 @@ module PaperView
     def paper_view_hidden_filters(except: [])
       excluded = Array(except).map(&:to_s)
       safe_join(paper_view_filter_params.except(*excluded).map { |name, value| hidden_field_tag(name, value, id: nil) })
+    end
+
+    def paper_view_nav_class(active)
+      active ? "pv-header__link pv-header__link--active" : "pv-header__link"
     end
 
     def paper_view_nonce_attribute

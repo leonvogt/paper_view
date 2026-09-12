@@ -1,0 +1,84 @@
+<section class="pv-panel">
+  <div class="pv-tiles">
+    <div class="pv-tile">
+      <span class="pv-label">Versions</span>
+      <span class="pv-tile__value"><%= stats ? number_with_delimiter(stats.total_count) : tag.span(class: "pv-skeleton pv-skeleton--value") %></span>
+    </div>
+
+    <div class="pv-tile">
+      <span class="pv-label">Item types</span>
+      <span class="pv-tile__value"><%= stats ? number_with_delimiter(stats.rows.size) : tag.span(class: "pv-skeleton pv-skeleton--value") %></span>
+    </div>
+
+    <div class="pv-tile">
+      <span class="pv-label">Table size</span>
+      <span class="pv-tile__value"><%= stats ? paper_view_bytes(stats.disk_size&.table) : tag.span(class: "pv-skeleton pv-skeleton--value") %></span>
+      <span class="pv-tile__note">
+        <% if stats %>
+          <%= paper_view_bytes(stats.estimated_total_bytes) %> payload<%= " plus #{paper_view_bytes(stats.disk_size.indexes)} of indexes" if stats.disk_size %>
+        <% else %>
+          <%= tag.span(class: "pv-skeleton pv-skeleton--note") %>
+        <% end %>
+      </span>
+    </div>
+  </div>
+</section>
+
+<% if stats&.empty? %>
+  <section class="pv-panel">
+    <p class="pv-empty">No versions have been recorded yet.</p>
+  </section>
+<% else %>
+  <section class="pv-card">
+    <div class="pv-card__head">
+      <span class="pv-card__title">Weight by item type</span>
+    </div>
+
+    <div class="pv-stats">
+      <div class="pv-stat pv-stat--head">
+        <span>Item type</span>
+        <span class="pv-stat__figure">Versions</span>
+        <span class="pv-stat__figure">Estimated payload</span>
+        <span>Share</span>
+      </div>
+
+      <% if stats %>
+        <% stats.rows.each do |row| %>
+          <% share = row.share(stats.estimated_total_bytes) %>
+
+          <div class="pv-stat">
+            <span class="pv-stat__type">
+              <% if row.item_type %>
+                <%= link_to row.item_type, versions_path(item_type: row.item_type) %>
+              <% else %>
+                <span class="pv-muted"><%= PaperView::ApplicationHelper::EMPTY %></span>
+              <% end %>
+            </span>
+
+            <span class="pv-stat__figure"><%= number_with_delimiter(row.count) %></span>
+            <span class="pv-stat__figure"><%= paper_view_bytes(row.estimated_bytes) %></span>
+
+            <span class="pv-stat__share">
+              <svg class="pv-share" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
+                <rect class="pv-share__fill" x="0" y="0" width="<%= (share * 100).round(2) %>" height="8" rx="1.5"></rect>
+              </svg>
+              <span class="pv-stat__percent"><%= paper_view_percentage(share) %></span>
+            </span>
+          </div>
+        <% end %>
+      <% else %>
+        <% 6.times do %>
+          <div class="pv-stat pv-stat--pending">
+            <span class="pv-stat__type"><%= tag.span(class: "pv-skeleton pv-skeleton--type") %></span>
+            <span class="pv-stat__figure"><%= tag.span(class: "pv-skeleton pv-skeleton--count") %></span>
+            <span class="pv-stat__figure"><%= tag.span(class: "pv-skeleton pv-skeleton--bytes") %></span>
+            <span class="pv-stat__share">
+              <%= tag.span(class: "pv-skeleton pv-skeleton--bar") %>
+              <%= tag.span(class: "pv-skeleton pv-skeleton--percent") %>
+            </span>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+<% end %>

@@ -7,4 +7,5 @@ group :development, :test do
   gem "rspec"
   gem "standard"
   gem "debug"
+  gem "sqlite3"
 end

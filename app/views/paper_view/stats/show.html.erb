@@ -1,0 +1,21 @@
+<% if @stats %>
+  <%= render "stats", stats: @stats %>
+<% else %>
+  <div
+    class="pv-stack pv-pending"
+    aria-busy="true"
+    data-pv-stats="<%= stats_path(load_content: 1) %>"
+  >
+    <%= render "stats", stats: nil %>
+  </div>
+
+  <noscript>
+    <style <%= paper_view_nonce_attribute %>>.pv-pending { display: none; }</style>
+
+    <section class="pv-panel">
+      <p class="pv-empty">
+        <%= link_to "Load the statistics", stats_path(load_content: 1) %>
+      </p>
+    </section>
+  </noscript>
+<% end %>
