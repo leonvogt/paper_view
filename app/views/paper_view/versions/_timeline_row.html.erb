@@ -23,12 +23,12 @@
     <div class="pv-version__meta">
       <span class="pv-version__actor"><%= paper_view_whodunnit(row.version) %></span>
 
-      <% unless multi_item_view %>
+      <% if !multi_item_view %>
         <span class="pv-pill pv-pill--event"><%= row.event %></span>
-      <% end %>
 
-      <% if row.burst? %>
-        <span class="pv-pill pv-pill--burst"><%= row.burst_label %></span>
+        <% if row.burst? %>
+          <span class="pv-pill pv-pill--burst"><%= row.burst_label %></span>
+        <% end %>
       <% end %>
     </div>
 
