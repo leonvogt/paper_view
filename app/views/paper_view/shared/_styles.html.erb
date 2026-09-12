@@ -221,7 +221,7 @@
     border-bottom: 1px solid var(--pv-border-subtle);
     cursor: pointer;
   }
-  .pv-version--stream { grid-template-columns: 64px 22px 168px 1fr auto; }
+  .pv-version--multi-item-view { grid-template-columns: 64px 22px 168px 1fr auto; }
   .pv-version:hover { background: var(--pv-row-hover); }
   .pv-version--selected, .pv-version--selected:hover { background: var(--pv-row-selected); }
   .pv-version:focus-visible { outline: 2px solid var(--pv-accent); outline-offset: -2px; }
@@ -241,7 +241,7 @@
   .pv-version__content { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .pv-version__meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .pv-version__actor { font: 600 13px/20px var(--pv-sans); color: var(--pv-ink); }
-  .pv-version--stream .pv-version__actor { font-weight: 400; color: var(--pv-ink-secondary); }
+  .pv-version--multi-item-view .pv-version__actor { font-weight: 400; color: var(--pv-ink-secondary); }
   .pv-version__note { font: 400 12px/18px var(--pv-sans); color: var(--pv-ink-soft); }
 
   .pv-pill { font: 500 11px/16px var(--pv-sans); border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
@@ -261,7 +261,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .pv-version--stream .pv-value { max-width: 240px; }
+  .pv-version--multi-item-view .pv-value { max-width: 240px; }
   .pv-value--old { color: var(--pv-del); background: var(--pv-del-bg); }
   .pv-value--new { color: var(--pv-add); background: var(--pv-add-bg); }
 
@@ -379,9 +379,9 @@
   }
 
   @media (max-width: 640px) {
-    .pv-version, .pv-version--stream { grid-template-columns: 52px 16px 1fr; padding: 12px 14px; }
+    .pv-version, .pv-version--multi-item-view { grid-template-columns: 52px 16px 1fr; padding: 12px 14px; }
     .pv-version__rail { grid-row: 1 / -1; }
     .pv-version__item, .pv-version__content, .pv-version__id { grid-column: 3; }
-    .pv-value, .pv-version--stream .pv-value { max-width: 100%; }
+    .pv-value, .pv-version--multi-item-view .pv-value { max-width: 100%; }
   }
 </style>

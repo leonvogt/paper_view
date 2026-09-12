@@ -1,5 +1,5 @@
 <div
-  class="pv-version<%= " pv-version--selected" if selected %><%= " pv-version--stream" if stream %>"
+  class="pv-version<%= " pv-version--selected" if selected %><%= " pv-version--multi-item-view" if multi_item_view %>"
   data-pv-version="<%= row.id %>"
   role="button"
   tabindex="0"
@@ -12,7 +12,7 @@
     <span class="pv-version__line"></span>
   </div>
 
-  <% if stream %>
+  <% if multi_item_view %>
     <div class="pv-version__item">
       <%= link_to row.item_label, paper_view_item_path(row.version), class: "pv-version__item-link" %>
       <span class="pv-pill pv-pill--<%= row.event %>"><%= row.event %></span>
@@ -23,7 +23,7 @@
     <div class="pv-version__meta">
       <span class="pv-version__actor"><%= paper_view_whodunnit(row.version) %></span>
 
-      <% unless stream %>
+      <% unless multi_item_view %>
         <span class="pv-pill pv-pill--event"><%= row.event %></span>
       <% end %>
 

@@ -23,12 +23,12 @@ module PaperView
       @items ||= rows.map(&:item_key).uniq
     end
 
-    def stream?
+    def multi_item_view?
       items.size != 1
     end
 
     def title
-      stream? ? "All changes" : rows.first.item_label
+      multi_item_view? ? "All changes" : rows.first.item_label
     end
 
     def selected

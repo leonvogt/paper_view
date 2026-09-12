@@ -8,11 +8,11 @@
     <span class="pv-detail__stamp"><%= paper_view_time(row.version.created_at) %></span>
   </div>
 
-  <div class="pv-detail__meta<%= " pv-detail__meta--split" if stream %>">
-    <% if stream %>
+  <div class="pv-detail__meta<%= " pv-detail__meta--split" if multi_item_view %>">
+    <% if multi_item_view %>
       <div class="pv-detail__field">
         <span class="pv-label">Item</span>
-        <%= link_to row.item_label, paper_view_item_path(row.version), class: "pv-detail__item" %>
+        <%= link_to row.item_label, paper_view_item_path(row.version), class: "pv-detail__item", title: row.item_label %>
       </div>
     <% end %>
 

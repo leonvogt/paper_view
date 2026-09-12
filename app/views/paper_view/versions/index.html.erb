@@ -31,7 +31,7 @@
 
           <span class="pv-card__meta">
             <%= number_with_delimiter(@paginator.total_count) %>
-            <%= "version".pluralize(@paginator.total_count) %><%= " · #{@timeline.items.size} items" if @timeline.stream? %>
+            <%= "version".pluralize(@paginator.total_count) %><%= " · #{@timeline.items.size} items" if @timeline.multi_item_view? %>
           </span>
 
           <span class="pv-spacer"></span>
@@ -58,7 +58,7 @@
               <div class="pv-timeline__day"><%= group.label %></div>
 
               <% group.rows.each do |row| %>
-                <%= render "paper_view/versions/timeline_row", row: row, stream: @timeline.stream?, selected: row == @timeline.selected %>
+                <%= render "paper_view/versions/timeline_row", row: row, multi_item_view: @timeline.multi_item_view?, selected: row == @timeline.selected %>
               <% end %>
             </div>
           <% end %>
@@ -69,7 +69,7 @@
 
       <aside class="pv-side" data-pv-panels>
         <% @timeline.rows.each do |row| %>
-          <%= render "paper_view/versions/panel", row: row, stream: @timeline.stream?, active: row == @timeline.selected %>
+          <%= render "paper_view/versions/panel", row: row, multi_item_view: @timeline.multi_item_view?, active: row == @timeline.selected %>
         <% end %>
       </aside>
     </div>
