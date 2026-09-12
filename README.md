@@ -20,7 +20,7 @@ gem "paper_view"
 # config/routes.rb
 Rails.application.routes.draw do
   authenticate :user, ->(user) { user.admin? } do
-    mount PaperView::Engine => "/paper_view"
+    mount PaperView::Engine => "/versions"
   end
 end
 ```
