@@ -4,7 +4,7 @@
       <h1 class="pv-hero__title">Which trail to follow?</h1>
 
       <div class="pv-hero__search">
-        <%= render "paper_view/versions/filters", query: @query, item_types: @item_types, autofocus: true %>
+        <%= render "paper_view/versions/filters", query: @query, item_types: @item_types, whodunnits: @whodunnits, autofocus: true %>
       </div>
 
       <% if @item_types.empty? %>
@@ -15,7 +15,7 @@
 <% else %>
   <section class="pv-panel">
     <div class="pv-panel__body">
-      <%= render "paper_view/versions/filters", query: @query, item_types: @item_types, autofocus: false %>
+      <%= render "paper_view/versions/filters", query: @query, item_types: @item_types, whodunnits: @whodunnits, autofocus: false %>
     </div>
   </section>
 

@@ -3,8 +3,12 @@ module PaperView
     EMPTY = "—".freeze
 
     def paper_view_whodunnit(version)
+      paper_view_whodunnit_label(version.whodunnit)
+    end
+
+    def paper_view_whodunnit_label(whodunnit)
       label = PaperView.config.whodunnit_label
-      value = label ? label.call(version.whodunnit) : version.whodunnit
+      value = label ? label.call(whodunnit) : whodunnit
       value.presence || EMPTY
     end
 

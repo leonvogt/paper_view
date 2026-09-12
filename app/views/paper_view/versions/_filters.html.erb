@@ -1,5 +1,5 @@
 <%= form_with url: versions_path, method: :get, local: true, data: {turbo: false}, class: "pv-search" do %>
-  <%= paper_view_hidden_filters(except: %i[item_type item_id event]) %>
+  <%= paper_view_hidden_filters(except: %i[item_type item_id event whodunnit]) %>
 
   <div class="pv-field pv-field--grow">
     <label for="pv-item-type">Item type</label>
@@ -43,6 +43,25 @@
       <option value="">Any event</option>
       <%= options_for_select(PaperView::VersionQuery::EVENTS, query.event) %>
     </select>
+  </div>
+
+  <div class="pv-field pv-field--grow">
+    <label for="pv-whodunnit">Whodunnit</label>
+
+    <input
+      id="pv-whodunnit"
+      type="text"
+      name="whodunnit"
+      value="<%= query.whodunnit %>"
+      class="pv-input"
+      list="pv-whodunnits"
+      placeholder="anyone"
+      autocomplete="off"
+    >
+
+    <datalist id="pv-whodunnits">
+      <%= safe_join(whodunnits.map { |whodunnit| tag.option(paper_view_whodunnit_label(whodunnit), value: whodunnit) }) %>
+    </datalist>
   </div>
 
   <div class="pv-field pv-field--actions">
