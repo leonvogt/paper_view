@@ -54,6 +54,8 @@
         if (panel.hidden) collapse(panel);
       });
 
+      panels.scrollTop = 0;
+
       var url = new URL(window.location.href);
       url.searchParams.set("version", id);
       window.history.replaceState({}, "", url);
