@@ -1,7 +1,7 @@
 # PaperView
 
 A lightweight, mountable dashboard for [paper_trail](https://github.com/paper-trail-gem/paper_trail).
-Browse the `versions` table and read, in one chronological timeline, what actually changed.   
+Browse the `versions` table and read, in a chronological timeline, what actually changed.   
 
 ![preview](https://res.cloudinary.com/dlvuixik3/image/upload/v1789159753/paper_view_preview_aclugn.png)
 
@@ -54,3 +54,11 @@ end
 ```
 
 Visit `/paper_view`.
+
+## PaperTrail setup
+
+To work properly, PaperView requires an `object_changes` column in your `versions` table. This can be added by running the installation generator with the `--with-changes` option. This can be done even if you already have a `versions` table; it will generate a migration that adds the `object_changes` column to your existing `versions` table:
+
+```bash
+rails generate paper_trail:install --with-changes
+```
