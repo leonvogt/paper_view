@@ -1,6 +1,7 @@
 require "paper_view/version"
 require "paper_view/configuration"
 require "paper_view/engine"
+require "paper_view/turbo_asset"
 
 module PaperView
   EMPTY = "—".freeze

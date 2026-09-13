@@ -41,6 +41,18 @@ module PaperView
       active ? "pv-header__link pv-header__link--active" : "pv-header__link"
     end
 
+    def paper_view_turbo_script_tag
+      return unless PaperView.config.turbo
+
+      javascript_include_tag(turbo_asset_path(digest: PaperView::TurboAsset::DIGEST), type: "module", nonce: true)
+    end
+
+    # A Turbo visit from the host app would swap our markup and styles into its document.
+    # Our own Turbo announces itself, so every other visit is sent through a full reload.
+    def paper_view_full_reload_required?
+      request.headers["X-PaperView-Turbo"].blank?
+    end
+
     def paper_view_nonce_attribute
       nonce = content_security_policy_nonce
       return unless nonce

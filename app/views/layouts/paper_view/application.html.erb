@@ -4,7 +4,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="turbo-visit-control" content="reload">
+    <% if paper_view_full_reload_required? %>
+      <meta name="turbo-visit-control" content="reload">
+    <% end %>
+    <meta name="turbo-cache-control" content="no-preview">
     <meta name="robots" content="noindex, nofollow">
 
     <title>PaperView</title>
@@ -12,6 +15,7 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= render "paper_view/shared/styles" %>
+    <%= paper_view_turbo_script_tag %>
   </head>
 
   <body>
@@ -26,7 +30,7 @@
       </nav>
 
       <% if main_app.respond_to?(:root_path) %>
-        <span class="pv-header__meta"><%= link_to "← Back to app", main_app.root_path %></span>
+        <span class="pv-header__meta"><%= link_to "← Back to app", main_app.root_path, data: {turbo: false} %></span>
       <% end %>
     </header>
 

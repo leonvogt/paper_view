@@ -1,120 +1,149 @@
 <%= javascript_tag nonce: true do %>
-  document.addEventListener("submit", function (event) {
-    var button = event.target.querySelector("button[type=submit]");
-    if (button && !button.querySelector(".pv-spinner")) {
-      button.classList.add("pv-btn--busy");
-      button.insertAdjacentHTML("beforeend", '<span class="pv-spinner"></span>');
-    }
-  });
-
-  document.addEventListener("change", function (event) {
-    var select = event.target.closest("select[data-pv-autosubmit]");
-    if (!select || !select.form) return;
-
-    if (select.form.requestSubmit) {
-      select.form.requestSubmit();
-    } else {
-      select.form.submit();
-    }
-  });
-
-  window.addEventListener("pageshow", function () {
-    document.querySelectorAll(".pv-btn--busy").forEach(function (button) {
-      button.classList.remove("pv-btn--busy");
-      button.querySelectorAll(".pv-spinner").forEach(function (spinner) { spinner.remove(); });
-    });
-  });
-
   (function () {
-    var timeline = document.querySelector("[data-pv-timeline]");
-    var panels = document.querySelector("[data-pv-panels]");
-    if (!timeline || !panels) return;
-
-    function collapse(panel) {
-      panel.querySelectorAll("[data-pv-toggle]").forEach(function (toggle) { setExpanded(toggle, false); });
-      panel.querySelectorAll("[data-pv-copy]").forEach(function (button) { button.textContent = "Copy"; });
-    }
-
-    function setExpanded(toggle, expanded) {
-      var target = document.getElementById(toggle.getAttribute("data-pv-toggle"));
-      toggle.setAttribute("aria-expanded", expanded);
-      toggle.querySelector(".pv-disclosure__arrow").textContent = expanded ? "▾" : "▸";
-      if (target) target.hidden = !expanded;
-    }
-
-    function select(id) {
-      timeline.querySelectorAll("[data-pv-version]").forEach(function (row) {
-        var active = row.getAttribute("data-pv-version") === id;
-        row.classList.toggle("pv-version--selected", active);
-        row.setAttribute("aria-pressed", active);
+    function clearBusyButtons() {
+      document.querySelectorAll(".pv-btn--busy").forEach(function (button) {
+        button.classList.remove("pv-btn--busy");
+        button.querySelectorAll(".pv-spinner").forEach(function (spinner) { spinner.remove(); });
       });
-
-      panels.querySelectorAll("[data-pv-panel]").forEach(function (panel) {
-        panel.hidden = panel.getAttribute("data-pv-panel") !== id;
-        if (panel.hidden) collapse(panel);
-      });
-
-      panels.scrollTop = 0;
-
-      var url = new URL(window.location.href);
-      url.searchParams.set("version", id);
-      window.history.replaceState({}, "", url);
     }
 
-    timeline.addEventListener("click", function (event) {
-      if (event.target.closest("a")) return;
-      var row = event.target.closest("[data-pv-version]");
-      if (row) select(row.getAttribute("data-pv-version"));
-    });
+    // Turbo never removes stylesheets it merged into the head, so a per request CSP nonce would pile them up.
+    function dropStaleStyles() {
+      var styles = document.head.querySelectorAll("style[data-pv-styles]");
+      for (var index = 0; index < styles.length - 1; index++) styles[index].remove();
+    }
 
-    timeline.addEventListener("keydown", function (event) {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      var row = event.target.closest("[data-pv-version]");
-      if (!row) return;
-      event.preventDefault();
-      select(row.getAttribute("data-pv-version"));
-    });
+    function initTimeline() {
+      var timeline = document.querySelector("[data-pv-timeline]");
+      var panels = document.querySelector("[data-pv-panels]");
+      if (!timeline || !panels) return;
 
-    panels.addEventListener("click", function (event) {
-      var toggle = event.target.closest("[data-pv-toggle]");
-      if (toggle) {
-        setExpanded(toggle, toggle.getAttribute("aria-expanded") !== "true");
-        return;
+      function collapse(panel) {
+        panel.querySelectorAll("[data-pv-toggle]").forEach(function (toggle) { setExpanded(toggle, false); });
+        panel.querySelectorAll("[data-pv-copy]").forEach(function (button) { button.textContent = "Copy"; });
       }
 
-      var copy = event.target.closest("[data-pv-copy]");
-      if (!copy || !navigator.clipboard) return;
-      navigator.clipboard.writeText(document.getElementById(copy.getAttribute("data-pv-copy")).textContent);
-      copy.textContent = "Copied";
+      function setExpanded(toggle, expanded) {
+        var target = document.getElementById(toggle.getAttribute("data-pv-toggle"));
+        toggle.setAttribute("aria-expanded", expanded);
+        toggle.querySelector(".pv-disclosure__arrow").textContent = expanded ? "▾" : "▸";
+        if (target) target.hidden = !expanded;
+      }
+
+      function select(id) {
+        timeline.querySelectorAll("[data-pv-version]").forEach(function (row) {
+          var active = row.getAttribute("data-pv-version") === id;
+          row.classList.toggle("pv-version--selected", active);
+          row.setAttribute("aria-pressed", active);
+        });
+
+        panels.querySelectorAll("[data-pv-panel]").forEach(function (panel) {
+          panel.hidden = panel.getAttribute("data-pv-panel") !== id;
+          if (panel.hidden) collapse(panel);
+        });
+
+        panels.scrollTop = 0;
+
+        var url = new URL(window.location.href);
+        url.searchParams.set("version", id);
+        window.history.replaceState(window.history.state, "", url);
+      }
+
+      timeline.addEventListener("click", function (event) {
+        if (event.target.closest("a")) return;
+        var row = event.target.closest("[data-pv-version]");
+        if (row) select(row.getAttribute("data-pv-version"));
+      });
+
+      timeline.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        var row = event.target.closest("[data-pv-version]");
+        if (!row) return;
+        event.preventDefault();
+        select(row.getAttribute("data-pv-version"));
+      });
+
+      panels.addEventListener("click", function (event) {
+        var toggle = event.target.closest("[data-pv-toggle]");
+        if (toggle) {
+          setExpanded(toggle, toggle.getAttribute("aria-expanded") !== "true");
+          return;
+        }
+
+        var copy = event.target.closest("[data-pv-copy]");
+        if (!copy || !navigator.clipboard) return;
+        navigator.clipboard.writeText(document.getElementById(copy.getAttribute("data-pv-copy")).textContent);
+        copy.textContent = "Copied";
+      });
+
+      if (new URL(window.location.href).searchParams.get("version")) {
+        var selected = timeline.querySelector(".pv-version--selected");
+        if (selected) selected.scrollIntoView({block: "center"});
+      }
+    }
+
+    function initStats() {
+      var pending = document.querySelector("[data-pv-stats]");
+      if (!pending || !window.fetch) return;
+
+      var source = pending.getAttribute("data-pv-stats");
+      var started = Date.now();
+      pending.removeAttribute("data-pv-stats");
+
+      function show(html) {
+        var elapsed = Date.now() - started;
+
+        // Nothing is on screen before 350ms, and once the skeleton is there it stays long enough to read as a load.
+        setTimeout(function () {
+          pending.innerHTML = html;
+          pending.removeAttribute("aria-busy");
+          pending.classList.remove("pv-pending");
+          pending.classList.add("pv-loaded");
+        }, elapsed < 350 ? 0 : Math.max(0, 900 - elapsed));
+      }
+
+      fetch(source, {credentials: "same-origin", headers: {"X-Requested-With": "XMLHttpRequest"}})
+        .then(function (response) { return response.ok ? response.text() : Promise.reject(response); })
+        .then(show)
+        .catch(function () { window.location.href = source; });
+    }
+
+    function init() {
+      dropStaleStyles();
+      clearBusyButtons();
+      initTimeline();
+      initStats();
+    }
+
+    // Turbo re-runs this script after every visit, the listeners below must only be registered once.
+    if (window.paperViewStarted) return init();
+    window.paperViewStarted = true;
+
+    document.addEventListener("submit", function (event) {
+      var button = event.target.querySelector("button[type=submit]");
+      if (button && !button.querySelector(".pv-spinner")) {
+        button.classList.add("pv-btn--busy");
+        button.insertAdjacentHTML("beforeend", '<span class="pv-spinner"></span>');
+      }
     });
 
-    if (new URL(window.location.href).searchParams.get("version")) {
-      var selected = timeline.querySelector(".pv-version--selected");
-      if (selected) selected.scrollIntoView({block: "center"});
-    }
-  })();
+    document.addEventListener("change", function (event) {
+      var select = event.target.closest("select[data-pv-autosubmit]");
+      if (!select || !select.form) return;
 
-  (function () {
-    var pending = document.querySelector("[data-pv-stats]");
-    if (!pending || !window.fetch) return;
+      if (select.form.requestSubmit) {
+        select.form.requestSubmit();
+      } else {
+        select.form.submit();
+      }
+    });
 
-    var started = Date.now();
+    document.addEventListener("turbo:before-fetch-request", function (event) {
+      event.detail.fetchOptions.headers["X-PaperView-Turbo"] = "1";
+    });
 
-    function show(html) {
-      var elapsed = Date.now() - started;
+    window.addEventListener("pageshow", clearBusyButtons);
 
-      // Nothing is on screen before 350ms, and once the skeleton is there it stays long enough to read as a load.
-      setTimeout(function () {
-        pending.innerHTML = html;
-        pending.removeAttribute("aria-busy");
-        pending.classList.remove("pv-pending");
-        pending.classList.add("pv-loaded");
-      }, elapsed < 350 ? 0 : Math.max(0, 900 - elapsed));
-    }
-
-    fetch(pending.getAttribute("data-pv-stats"), {credentials: "same-origin", headers: {"X-Requested-With": "XMLHttpRequest"}})
-      .then(function (response) { return response.ok ? response.text() : Promise.reject(response); })
-      .then(show)
-      .catch(function () { window.location.href = pending.getAttribute("data-pv-stats"); });
+    init();
   })();
 <% end %>

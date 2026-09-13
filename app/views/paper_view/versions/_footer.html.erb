@@ -25,7 +25,7 @@
     <% end %>
   </nav>
 
-  <%= form_with url: versions_path, method: :get, local: true, data: {turbo: false}, class: "pv-footer__end" do %>
+  <%= form_with url: versions_path, method: :get, local: true, class: "pv-footer__end" do %>
     <%= paper_view_hidden_filters(except: :per_page) %>
     <label class="pv-muted" for="pv-per-page">Per page</label>
 

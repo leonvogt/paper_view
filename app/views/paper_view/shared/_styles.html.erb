@@ -1,4 +1,4 @@
-<style <%= paper_view_nonce_attribute %>>
+<style data-pv-styles <%= paper_view_nonce_attribute %>>
   *, *::before, *::after { box-sizing: border-box; }
   [hidden] { display: none !important; }
 
@@ -187,6 +187,8 @@
   }
   @keyframes pv-spin { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) { .pv-spinner { animation-duration: 2.4s; } }
+
+  .turbo-progress-bar { height: 2px; background: var(--pv-accent); }
 
   .pv-panel--hero { width: 100%; max-width: 880px; margin: 32px auto 0; }
   .pv-hero { padding: 48px 40px 40px; text-align: center; }
