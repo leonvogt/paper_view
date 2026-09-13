@@ -82,6 +82,13 @@
       }
     }
 
+    function measureLayoutTop() {
+      var layout = document.querySelector(".pv-layout");
+      if (!layout) return;
+      var top = layout.getBoundingClientRect().top + window.scrollY;
+      document.documentElement.style.setProperty("--pv-layout-top", Math.round(top) + "px");
+    }
+
     function initStats() {
       var pending = document.querySelector("[data-pv-stats]");
       if (!pending || !window.fetch) return;
@@ -111,6 +118,7 @@
     function init() {
       dropStaleStyles();
       clearBusyButtons();
+      measureLayoutTop();
       initTimeline();
       initStats();
     }
@@ -118,6 +126,8 @@
     // Turbo re-runs this script after every visit, the listeners below must only be registered once.
     if (window.paperViewStarted) return init();
     window.paperViewStarted = true;
+
+    window.addEventListener("resize", measureLayoutTop);
 
     document.addEventListener("submit", function (event) {
       var button = event.target.querySelector("button[type=submit]");
