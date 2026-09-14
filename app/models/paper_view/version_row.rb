@@ -34,6 +34,10 @@ module PaperView
       [version.item_type, version.item_id]
     end
 
+    def metadata
+      @metadata ||= Metadata.for(version)
+    end
+
     def burst?
       burst_size > 1
     end

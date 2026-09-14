@@ -22,6 +22,41 @@
     </div>
   </div>
 
+  <% if row.metadata.any? %>
+    <div class="pv-detail__metadata">
+      <span class="pv-label">Metadata</span>
+
+      <div class="pv-meta">
+        <% row.metadata.visible.each do |entry| %>
+          <span class="pv-meta__key"><%= entry.name %></span>
+          <span class="pv-meta__value"><%= entry.text %></span>
+        <% end %>
+      </div>
+
+      <% if row.metadata.hidden.any? %>
+        <% rest_id = "pv-meta-#{row.id}" %>
+        <button
+          type="button"
+          class="pv-meta__more"
+          aria-expanded="false"
+          aria-controls="<%= rest_id %>"
+          data-pv-toggle="<%= rest_id %>"
+        >
+          <span class="pv-disclosure__arrow">▸</span>
+          <%= row.metadata.hidden.size %> more
+          <%= "key".pluralize(row.metadata.hidden.size) %>
+        </button>
+
+        <div class="pv-meta" id="<%= rest_id %>" hidden>
+          <% row.metadata.hidden.each do |entry| %>
+            <span class="pv-meta__key"><%= entry.name %></span>
+            <span class="pv-meta__value"><%= entry.text %></span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
   <div class="pv-detail__body">
     <% if row.change_set.unreadable? %>
       <p class="pv-detail__note">

@@ -13,6 +13,7 @@ require "paper_view/payload"
 require "paper_view/leaf_change"
 require "paper_view/attribute_change"
 require "paper_view/change_set"
+require "paper_view/metadata"
 require "paper_view/version_row"
 require "paper_view/versions_table"
 require "paper_view/payload_sizes"
@@ -23,6 +24,13 @@ Dir[File.expand_path("support/**/*.rb", __dir__)].sort.each { |support| require 
 Time.zone = "Europe/Zurich"
 
 Version = Struct.new(:object_changes, :id, :event, :item_type, :item_id, :created_at)
+
+MetaVersion = Struct.new(:ip, :user_agent, :author_id, :note, :flagged, :context, :stamped_at) do
+  def self.column_names
+    %w[id item_type item_id event whodunnit object object_changes created_at
+      ip user_agent author_id note flagged context stamped_at]
+  end
+end
 
 RSpec.configure do |config|
   config.disable_monkey_patching!

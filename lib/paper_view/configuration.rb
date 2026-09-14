@@ -2,7 +2,7 @@ module PaperView
   class Configuration
     DEFAULT_TIME_FORMAT = "%Y-%m-%d %H:%M:%S".freeze
 
-    attr_accessor :version_class_name, :parent_controller, :per_page, :whodunnit_label, :time_format, :turbo
+    attr_accessor :version_class_name, :parent_controller, :per_page, :whodunnit_label, :time_format, :turbo, :metadata_columns
 
     attr_reader :authentication_block, :authorization_block
 
@@ -13,6 +13,7 @@ module PaperView
       @whodunnit_label = nil
       @time_format = DEFAULT_TIME_FORMAT
       @turbo = true
+      @metadata_columns = nil
     end
 
     def authenticate_with(&block)

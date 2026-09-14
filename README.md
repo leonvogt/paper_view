@@ -47,6 +47,10 @@ PaperView.setup do |config|
 
   config.per_page = 25
 
+  # The exact columns to show as metadata. Defaults to every column that
+  # paper_trail does not write itself, so usually nothing has to be set here.
+  # config.metadata_columns = %w[ip user_agent]
+
   # Any model with the paper_trail column layout works here.
   # Required interface: id, item_type, item_id, event, whodunnit, created_at, object_changes
   config.version_class_name = "PaperTrail::Version"
@@ -54,6 +58,24 @@ end
 ```
 
 Visit `/paper_view`.
+
+## Metadata
+
+paper_trail can store [extra columns](https://github.com/paper-trail-gem/paper_trail#4c-storing-metadata) on a
+version, either through `has_paper_trail meta: { ... }` or through `controller_info`:
+
+```ruby
+class Post < ApplicationRecord
+  has_paper_trail meta: {author_id: :author_id}
+end
+```
+
+Every column of the `versions` table counts as metadata, except the ones paper_trail writes itself:
+`id`, `item_type`, `item_subtype`, `item_id`, `event`, `whodunnit`, `object`, `object_changes`,
+`created_at`, `updated_at` and `transaction_id`.
+
+Set `config.metadata_columns` to the exact list you want if your table carries columns you would
+rather not see — anything left out of that list is then hidden.
 
 ## PaperTrail setup
 
