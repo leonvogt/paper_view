@@ -3,7 +3,7 @@
 A lightweight, mountable dashboard for [paper_trail](https://github.com/paper-trail-gem/paper_trail).
 Browse the `versions` table and read, in a chronological timeline, what actually changed.   
 
-![preview](https://res.cloudinary.com/dlvuixik3/image/upload/v1789159753/paper_view_preview_aclugn.png)
+![preview](https://res.cloudinary.com/dlvuixik3/image/upload/v1789366964/paper_view_demo_gdhadu.png)
 
 ## Installation
 
