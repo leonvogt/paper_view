@@ -19,18 +19,6 @@ module PaperView
         .map { |chunk| Group.new(day_label(chunk.first.date), chunk) }
     end
 
-    def items
-      @items ||= rows.map(&:item_key).uniq
-    end
-
-    def multi_item_view?
-      items.size != 1
-    end
-
-    def title
-      multi_item_view? ? "All changes" : rows.first.item_label
-    end
-
     def selected
       @selected ||= rows.find { |row| row.id.to_s == @selected_id.to_s } || newest
     end
