@@ -18,6 +18,8 @@
       var panels = document.querySelector("[data-pv-panels]");
       if (!timeline || !panels) return;
 
+      var footer = timeline.parentNode.querySelector(".pv-footer");
+
       function collapse(panel) {
         panel.querySelectorAll("[data-pv-toggle]").forEach(function (toggle) { setExpanded(toggle, false); });
         panel.querySelectorAll("[data-pv-copy]").forEach(function (button) { button.textContent = "Copy"; });
@@ -49,6 +51,24 @@
         window.history.replaceState(window.history.state, "", url);
       }
 
+      function rows() {
+        return Array.prototype.slice.call(timeline.querySelectorAll("[data-pv-version]"));
+      }
+
+      function focusRow(row) {
+        select(row.getAttribute("data-pv-version"));
+        row.focus();
+      }
+
+      function move(row, step) {
+        var all = rows();
+        var next = all[all.indexOf(row) + step];
+        if (next) return focusRow(next);
+
+        var control = step > 0 && footer && footer.querySelector("a[href], select, button");
+        if (control) control.focus();
+      }
+
       timeline.addEventListener("click", function (event) {
         if (event.target.closest("a")) return;
         var row = event.target.closest("[data-pv-version]");
@@ -56,12 +76,31 @@
       });
 
       timeline.addEventListener("keydown", function (event) {
-        if (event.key !== "Enter" && event.key !== " ") return;
         var row = event.target.closest("[data-pv-version]");
         if (!row) return;
+
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+          event.preventDefault();
+          move(row, event.key === "ArrowDown" ? 1 : -1);
+          return;
+        }
+
+        if (event.key !== "Enter" && event.key !== " ") return;
         event.preventDefault();
         select(row.getAttribute("data-pv-version"));
       });
+
+      if (footer) {
+        footer.addEventListener("keydown", function (event) {
+          // Inside a select or input the arrow keys belong to the control itself.
+          if (event.key !== "ArrowUp" || event.target.closest("select, input")) return;
+
+          var all = rows();
+          if (!all.length) return;
+          event.preventDefault();
+          focusRow(all[all.length - 1]);
+        });
+      }
 
       panels.addEventListener("click", function (event) {
         var toggle = event.target.closest("[data-pv-toggle]");
