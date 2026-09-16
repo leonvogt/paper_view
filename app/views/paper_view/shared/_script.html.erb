@@ -176,6 +176,18 @@
       }
     });
 
+    document.addEventListener("click", function (event) {
+      if (!event.target.closest("[data-pv-theme-toggle]")) return;
+
+      var root = document.documentElement;
+      var stored = root.getAttribute("data-pv-theme");
+      var dark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      var next = dark ? "light" : "dark";
+
+      root.setAttribute("data-pv-theme", next);
+      try { localStorage.setItem("pv-theme", next); } catch (error) {}
+    });
+
     document.addEventListener("change", function (event) {
       var select = event.target.closest("select[data-pv-autosubmit]");
       if (!select || !select.form) return;

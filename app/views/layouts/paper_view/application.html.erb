@@ -19,6 +19,8 @@
   </head>
 
   <body>
+    <%= render "paper_view/shared/theme" %>
+
     <header class="pv-header">
       <%= link_to root_path, class: "pv-header__brand" do %>
         PaperView
@@ -29,9 +31,16 @@
         <%= link_to "Stats", stats_path, class: paper_view_nav_class(controller_name == "stats") %>
       </nav>
 
-      <% if main_app.respond_to?(:root_path) %>
-        <span class="pv-header__meta"><%= link_to "← Back to app", main_app.root_path, data: {turbo: false} %></span>
-      <% end %>
+      <div class="pv-header__right">
+        <% if main_app.respond_to?(:root_path) %>
+          <span class="pv-header__meta"><%= link_to "← Back to app", main_app.root_path, data: {turbo: false} %></span>
+        <% end %>
+
+        <button type="button" class="pv-header__theme" data-pv-theme-toggle title="Switch between light and dark">
+          <span class="pv-theme__to-dark">☾ Dark</span>
+          <span class="pv-theme__to-light">☀ Light</span>
+        </button>
+      </div>
     </header>
 
     <main class="pv-main pv-stack">

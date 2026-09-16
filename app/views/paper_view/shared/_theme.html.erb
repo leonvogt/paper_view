@@ -1,0 +1,8 @@
+<%= javascript_tag nonce: true do %>
+  (function () {
+    try {
+      var theme = localStorage.getItem("pv-theme");
+      if (theme === "dark" || theme === "light") document.documentElement.setAttribute("data-pv-theme", theme);
+    } catch (error) {}
+  })();
+<% end %>
