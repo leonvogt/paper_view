@@ -18,6 +18,12 @@ module PaperView
       path.start_with?("[") ? "#{prefix}#{path}" : "#{prefix}.#{path}"
     end
 
+    def diff
+      return @diff if defined?(@diff)
+
+      @diff = TextDiff.for(old_value, new_value)
+    end
+
     def old_text
       AttributeChange.display(old_value)
     end

@@ -92,32 +92,32 @@
               <div class="pv-keys">
                 <span class="pv-keys__name"><%= leaf.path %></span>
 
-                <div class="pv-keys__values">
-                  <span class="pv-value pv-value--old"><%= leaf.old_text %></span>
-                  <span class="pv-change__arrow">→</span>
-                  <span class="pv-value pv-value--new"><%= leaf.new_text %></span>
-                </div>
+                <% if leaf.diff %>
+                  <%= render "paper_view/versions/diff", diff: leaf.diff %>
+                <% else %>
+                  <div class="pv-keys__values">
+                    <span class="pv-value pv-value--old"><%= leaf.old_text %></span>
+                    <span class="pv-change__arrow">→</span>
+                    <span class="pv-value pv-value--new"><%= leaf.new_text %></span>
+                  </div>
+                <% end %>
               </div>
             <% end %>
             <% if change.unchanged_count.positive? %>
-              <% whole_id = "pv-whole-#{row.id}-#{index}" %>
-              <button
-                type="button"
-                class="pv-attribute__unchanged"
-                aria-expanded="false"
-                aria-controls="<%= whole_id %>"
-                data-pv-toggle="<%= whole_id %>"
-              >
-                <span class="pv-disclosure__arrow">▸</span>
-                <%= change.unchanged_count %> unchanged
-                <%= "value".pluralize(change.unchanged_count) %>
-              </button>
-
-              <div class="pv-bars" id="<%= whole_id %>" hidden>
-                <div class="pv-bar pv-bar--old"><%= change.old_text %></div>
-                <div class="pv-bar pv-bar--new"><%= change.new_text %></div>
-              </div>
+              <%= render "paper_view/versions/full_value",
+                change: change,
+                id: "pv-whole-#{row.id}-#{index}",
+                count: change.unchanged_count,
+                unit: "value" %>
             <% end %>
+          <% elsif change.diff %>
+            <%= render "paper_view/versions/diff", diff: change.diff %>
+
+            <%= render "paper_view/versions/full_value",
+              change: change,
+              id: "pv-whole-#{row.id}-#{index}",
+              count: change.diff.unchanged_count,
+              unit: "line" %>
           <% else %>
             <div class="pv-bars">
               <div class="pv-bar pv-bar--old"><%= change.old_text %></div>

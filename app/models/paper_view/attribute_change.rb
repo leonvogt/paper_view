@@ -79,6 +79,11 @@ module PaperView
       @new_text ||= text(new_value)
     end
 
+    # Long texts read as a diff instead of two blocks that have to be compared by eye.
+    def diff
+      leaf.diff unless nested?
+    end
+
     def leaf_changes
       leaf_pairs.filter_map { |path, before, after| LeafChange.new(path, before, after) if before != after }
     end
@@ -88,12 +93,16 @@ module PaperView
     end
 
     def leaves
-      return [LeafChange.new(name, old_value, new_value)] unless nested?
+      return [leaf] unless nested?
 
       leaf_changes.map { |change| change.under(name) }
     end
 
     private
+
+    def leaf
+      @leaf ||= LeafChange.new(name, old_value, new_value)
+    end
 
     def text(value)
       self.class.display(self.class.structure(value) || value, pretty: true)

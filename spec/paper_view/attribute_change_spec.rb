@@ -48,6 +48,31 @@ RSpec.describe PaperView::AttributeChange do
     end
   end
 
+  describe "#diff" do
+    def text(replacement = "line 4")
+      (0..9).map { |index| (index == 4) ? replacement : "line #{index}" }.join("\n")
+    end
+
+    it "diffs two long texts" do
+      diff = change("template", text, text("line four")).diff
+
+      expect(diff.added_count).to eq(1)
+      expect(diff.unchanged_count).to eq(9)
+    end
+
+    it "leaves short values to the plain bars" do
+      expect(change("title", "old", "new").diff).to be_nil
+    end
+
+    it "leaves structures to the key diff" do
+      expect(change("settings", {"a" => 1}, {"a" => 2}).diff).to be_nil
+    end
+
+    it "leaves a value that was only just filled in" do
+      expect(change("template", nil, text).diff).to be_nil
+    end
+  end
+
   describe "#leaf_changes" do
     subject(:attribute) { change("settings", {"a" => 1, "b" => {"c" => 2}}, {"a" => 1, "b" => {"c" => 3}}) }
 

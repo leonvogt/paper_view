@@ -324,6 +324,10 @@
   .pv-change { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; font: 400 12px/18px var(--pv-mono); }
   .pv-change__path { color: var(--pv-ink); }
   .pv-change__arrow { color: var(--pv-ink-faint); }
+  .pv-tally { padding: 1px 6px; border-radius: 4px; }
+  .pv-tally--add { color: var(--pv-add); background: var(--pv-add-bg); }
+  .pv-tally--del { color: var(--pv-del); background: var(--pv-del-bg); }
+  .pv-tally__unit { color: var(--pv-ink-faint); }
   .pv-value {
     max-width: 280px;
     padding: 1px 6px;
@@ -382,6 +386,19 @@
   .pv-keys__name { font: 400 11px/1.4 var(--pv-mono); color: var(--pv-ink-soft); word-break: break-all; }
   .pv-keys__values { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; font: 400 12px/1.5 var(--pv-mono); }
   .pv-keys__values .pv-value { max-width: none; overflow: visible; white-space: normal; word-break: break-all; }
+
+  .pv-diff { display: flex; flex-direction: column; gap: 6px; }
+  .pv-diff__stats { display: flex; gap: 8px; font: 400 11px/1.4 var(--pv-mono); }
+  .pv-diff__hunk { border: 1px solid var(--pv-border); border-radius: 6px; overflow: hidden; }
+  .pv-diff__range { padding: 3px 8px; background: var(--pv-surface-muted); border-bottom: 1px solid var(--pv-border); font: 400 11px/1.6 var(--pv-mono); color: var(--pv-ink-faint); }
+  .pv-diff__line { display: grid; grid-template-columns: 34px 34px 10px minmax(0, 1fr); gap: 4px; font: 400 12px/1.5 var(--pv-mono); color: var(--pv-ink-secondary); }
+  .pv-diff__line--deleted { color: var(--pv-del); background: var(--pv-del-bg); }
+  .pv-diff__line--added { color: var(--pv-add); background: var(--pv-add-bg); }
+  .pv-diff__num { padding-left: 6px; text-align: right; color: var(--pv-ink-faint); user-select: none; }
+  .pv-diff__sign { text-align: center; user-select: none; }
+  .pv-diff__line--deleted .pv-diff__sign::before { content: "-"; }
+  .pv-diff__line--added .pv-diff__sign::before { content: "+"; }
+  .pv-diff__text { padding-right: 8px; white-space: pre-wrap; word-break: break-all; }
 
   .pv-disclosures { display: grid; grid-template-columns: 1fr 1fr; column-gap: 12px; }
   .pv-disclosure {

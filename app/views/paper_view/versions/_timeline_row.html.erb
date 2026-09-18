@@ -35,9 +35,14 @@
     <% row.lines.each do |line| %>
       <div class="pv-change">
         <span class="pv-change__path"><%= line.path %></span>
-        <span class="pv-value pv-value--old" title="<%= line.old_text %>"><%= truncate(line.old_text, length: 140) %></span>
-        <span class="pv-change__arrow">→</span>
-        <span class="pv-value pv-value--new" title="<%= line.new_text %>"><%= truncate(line.new_text, length: 140) %></span>
+
+        <% if line.diff %>
+          <%= render "paper_view/versions/tally", diff: line.diff %>
+        <% else %>
+          <span class="pv-value pv-value--old" title="<%= line.old_text %>"><%= truncate(line.old_text, length: 140) %></span>
+          <span class="pv-change__arrow">→</span>
+          <span class="pv-value pv-value--new" title="<%= line.new_text %>"><%= truncate(line.new_text, length: 140) %></span>
+        <% end %>
       </div>
     <% end %>
 

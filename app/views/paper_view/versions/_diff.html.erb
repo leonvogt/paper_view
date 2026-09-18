@@ -1,0 +1,20 @@
+<div class="pv-diff">
+  <div class="pv-diff__stats">
+    <%= render "paper_view/versions/tally", diff: diff %>
+  </div>
+
+  <% diff.hunks.each do |hunk| %>
+    <div class="pv-diff__hunk">
+      <div class="pv-diff__range"><%= hunk.header %></div>
+
+      <% hunk.lines.each do |line| %>
+        <div class="pv-diff__line pv-diff__line--<%= line.kind %>">
+          <span class="pv-diff__num"><%= line.old_number %></span>
+          <span class="pv-diff__num"><%= line.new_number %></span>
+          <span class="pv-diff__sign"></span>
+          <span class="pv-diff__text"><%= line.text %></span>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

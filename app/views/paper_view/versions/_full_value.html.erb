@@ -1,0 +1,15 @@
+<button
+  type="button"
+  class="pv-attribute__unchanged"
+  aria-expanded="false"
+  aria-controls="<%= id %>"
+  data-pv-toggle="<%= id %>"
+>
+  <span class="pv-disclosure__arrow">▸</span>
+  <%= count %> unchanged <%= unit.pluralize(count) %>
+</button>
+
+<div class="pv-bars" id="<%= id %>" hidden>
+  <div class="pv-bar pv-bar--old"><%= change.old_text %></div>
+  <div class="pv-bar pv-bar--new"><%= change.new_text %></div>
+</div>

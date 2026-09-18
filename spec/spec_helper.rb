@@ -10,6 +10,7 @@ require "paper_view/application_helper"
 
 $LOAD_PATH.unshift File.expand_path("../app/models", __dir__)
 require "paper_view/payload"
+require "paper_view/text_diff"
 require "paper_view/leaf_change"
 require "paper_view/attribute_change"
 require "paper_view/change_set"
